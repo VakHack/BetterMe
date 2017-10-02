@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#62ABBE"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    android:soundEffectsEnabled="true"
+    tools:background="#62ABBE"
+    tools:context="roeevakrat.betterme.WelcomeScreen">
+
+    <RelativeLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="top"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            android:text="Improve Yourself."
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="#0E4160"
+            android:textSize="50sp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="3dp"/>
+
+        <TextView
+            android:id="@+id/introduction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/welcomeText"
+            android:layout_gravity="end"
+            android:lineSpacingExtra="7sp"
+            android:paddingBottom="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="Get rid of your\nbad habits with\nBetterMe habit-tracker"
+            android:textColor="@android:color/background_light"
+            android:textSize="32sp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="151dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topLayout">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="180dp"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp"
+            android:background="#0E4160"
+            android:text="Get Started"
+            android:textAlignment="center"
+            android:textColor="#F7AB00"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/rocket"
+            android:layout_width="200dp"
+            android:layout_height="190dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
+            android:baselineAlignBottom="false"
+            app:srcCompat="@drawable/rocket"/>
+    </RelativeLayout>
+
+</RelativeLayout>

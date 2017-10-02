@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BetterMe</string>
+    <string name="title_activity_counter_screen">CounterScreen</string>
+    <string name="CounterValue">0</string>
+    <string name="TodaysCounter">0</string>
+    <string name="date">dd/mm/yy</string>
+    <string name="weekDates">dd/mm/yy - dd/mm/yy</string>
+    <string name="title_activity_help_screen">HelpScreen</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="trend_button_txt">Trend On</string>
+</resources>
