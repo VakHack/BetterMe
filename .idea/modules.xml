@@ -3,12 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BetterMe.iml" filepath="$PROJECT_DIR$/BetterMe.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MPChart/MPChart.iml" filepath="$PROJECT_DIR$/MPChart/MPChart.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MPChartLib/MPChartLib.iml" filepath="$PROJECT_DIR$/MPChartLib/MPChartLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/commons-math3-3.6.1/commons-math3-3.6.1.iml" filepath="$PROJECT_DIR$/commons-math3-3.6.1/commons-math3-3.6.1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/joda-time-2.9.9/joda-time-2.9.9.iml" filepath="$PROJECT_DIR$/joda-time-2.9.9/joda-time-2.9.9.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tourguide/tourguide.iml" filepath="$PROJECT_DIR$/tourguide/tourguide.iml" />
     </modules>
   </component>
 </project>
