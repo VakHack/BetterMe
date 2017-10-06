@@ -33,8 +33,8 @@ public class PositiveFeedbackScreen extends AppCompatActivity {
         bodyText = (TextView)findViewById(R.id.positiveFeedbackBody);
         backButton = (ImageView)findViewById(R.id.backFromPositive);
 
-        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getSanSarif());
+        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getBodyFont());
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -32,8 +32,8 @@ public class NegativeFeedbackScreen extends AppCompatActivity {
         bodyText = (TextView)findViewById(R.id.negativeFeedbackBody);
         backButton = (ImageView)findViewById(R.id.backFromNegative);
 
-        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getSanSarif());
+        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getBodyFont());
 
 
         backButton.setOnClickListener(new View.OnClickListener() {

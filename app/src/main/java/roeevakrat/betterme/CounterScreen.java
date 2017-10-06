@@ -48,6 +48,8 @@ public class CounterScreen extends AppCompatActivity {
     SoundEffectPlayer screenEffect;
     SoundEffectPlayer buttonEffect;
 
+    TextView overlay;
+
     private void setTodaysCounter(int val){
 
         countersEditor = countersMap.edit();
@@ -56,29 +58,6 @@ public class CounterScreen extends AppCompatActivity {
 
         counterView.setText(String.valueOf(val));
     }
-
-//    private void counterResetDialog(){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(CounterScreen.this);
-//        builder.setCancelable(true);
-//        builder.setMessage("Do you want to reset " + todaysDate.getDate() + " counter?");
-//
-//        builder.setPositiveButton("Confirm",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        setTodaysCounter(0);
-//                    }
-//                });
-//
-//        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//            }
-//        });
-//
-//        AlertDialog dialog = builder.create();
-//        dialog.show();
-//    }
 
     private void setTextFont(TextView tv, Typeface tf, String font){
         tf = Typeface.createFromAsset(getAssets(), font);
@@ -262,17 +241,21 @@ public class CounterScreen extends AppCompatActivity {
         counterTitleTop = (TextView)findViewById(R.id.counterTitleTop);
         counterTitleMid = (TextView)findViewById(R.id.counterTitleMid);
         counterTitleBottom = (TextView)findViewById(R.id.counterTitleBottom);
+        overlay = (TextView)findViewById(R.id.overlay);
+
+        //set help view invisible
+        overlay.setVisibility(View.INVISIBLE);
 
         //initialize sound effects
         screenEffect = new SoundEffectPlayer(this, R.raw.app_resume);
         buttonEffect = new SoundEffectPlayer(this, R.raw.counter_pressed);
 
         //update texts fonts
-        setTextFont(counterTitleTop, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(counterTitleMid, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(counterTitleBottom, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getSanSarif());
-        setTextFont(counterView, counterViewFont, AppFontsDB.getInstance().getSarif());
+        setTextFont(counterTitleTop, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(counterTitleMid, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(counterTitleBottom, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getBodyFont());
+        setTextFont(counterView, counterViewFont, AppFontsDB.getInstance().getTitleFont());
 
         screenEffect.play();
 
@@ -310,8 +293,7 @@ public class CounterScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent counterScreenIntent = new Intent(CounterScreen.this, HelpCounterScreen.class);
-                startActivity(counterScreenIntent);
+            overlay.setVisibility(View.VISIBLE);
             }
         });
 
@@ -343,6 +325,14 @@ public class CounterScreen extends AppCompatActivity {
 
                 refreshCurrentDate();
                 refreshCounter();
+            }
+        });
+
+        overlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                overlay.setVisibility(View.INVISIBLE);
             }
         });
 

@@ -6,128 +6,159 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#984A59"
-    android:elevation="1dp"
-    android:paddingBottom="20dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="10dp"
     tools:context="roeevakrat.betterme.WeeklyChart">
 
-    <RelativeLayout
-        android:id="@+id/topLayout"
+    <TextView
+        android:id="@+id/trendButton"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:background="#FF8F56"
+        android:paddingTop="12dp"
+        android:text="@string/trend_button_txt"
+        android:textAlignment="center"
+        android:textColor="#984A59"
+        android:textStyle="bold"/>
+
+    <ImageView
+        android:id="@+id/backToCounter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:tint="#FF8F56"
+        app:srcCompat="@drawable/ic_arrow_back_white_24dp"/>
+
+    <ImageView
+        android:id="@+id/weeklyChartHelpButton"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_marginTop="20dp"
+        android:tint="#FF8F56"
+        app:srcCompat="@drawable/question"/>
+
+    <TextView
+        android:id="@+id/weekChartTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:paddingBottom="15dp"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/weeklyChartHelpButton"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_marginTop="15dp"
+        android:paddingBottom="10dp"
+        android:text="Weekly Results"
+        android:textColor="#FFF1A8"
+        android:textSize="30sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/chartDatesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weekChartTitle"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="5dp"
+        android:text="@string/weekDates"
+        android:textColor="#FF8F56"
+        android:textSize="32sp"
+        android:textStyle="bold"/>
+
+    <ImageView
+        android:id="@+id/lastWeek"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/weekChartTitle"
+        android:layout_toLeftOf="@+id/chartDatesTitle"
+        android:tint="#FF8F56"
+        app:srcCompat="@drawable/ic_keyboard_arrow_left_white_24dp"
+        />
+
+    <ImageView
+        android:id="@+id/nextWeek"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/chartDatesTitle"
+        android:layout_toRightOf="@+id/chartDatesTitle"
+        android:tint="#FF8F56"
+        app:srcCompat="@drawable/ic_keyboard_arrow_right_white_24dp"/>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/chartDatesTitle"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:paddingTop="5dp">
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"/>
 
-        <Button
-            android:id="@+id/weeklyTrendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="#FF8F56"
-            android:text="@string/trend_button_txt"
-            android:textColor="#984A59"/>
-
-        <ImageView
-            android:id="@+id/backToCounter"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:tint="#FF8F56"
-            app:srcCompat="@drawable/ic_arrow_back_white_24dp"/>
-
-        <ImageView
-            android:id="@+id/weeklyChartHelpButton"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="false"
-            android:layout_marginTop="5dp"
-            android:tint="#FF8F56"
-            app:srcCompat="@drawable/question"/>
-
-        <ImageView
-            android:id="@+id/trendButton"
-            android:layout_width="47dp"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="false"
-            android:tint="#FF8F56"
-            app:srcCompat="@drawable/linear_plot2"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
+    <TextView
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/topLayout"
-        >
+        android:background="#99000000"
+        android:clickable="true"/>
 
-        <TextView
-            android:id="@+id/weekChartTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_below="@+id/topLayout"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="false"
-            android:paddingBottom="10dp"
-            android:text="Weekly Results"
-            android:textColor="#FFF1A8"
-            android:textSize="30sp"
-            android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/trendButtonArrow"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_toLeftOf="@+id/trendButton"
+        app:srcCompat="@drawable/left_arrow"/>
 
-        <TextView
-            android:id="@+id/chartDatesTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/weekChartTitle"
-            android:layout_centerHorizontal="true"
-            android:paddingBottom="5dp"
-            android:text="@string/weekDates"
-            android:textColor="#FF8F56"
-            android:textSize="32sp"
-            android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/trendButtonInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/trendButtonArrow"
+        android:paddingRight="5dp"
+        android:paddingTop="15dp"
+        android:text="Add/Remove trend line to weekly chart"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"/>
 
-        <ImageView
-            android:id="@+id/lastWeek"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/weekChartTitle"
-            android:layout_toLeftOf="@+id/chartDatesTitle"
-            android:tint="#FF8F56"
-            app:srcCompat="@drawable/ic_keyboard_arrow_left_white_24dp"
-            />
+    <ImageView
+        android:id="@+id/weekArrowArrow"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="false"
+        android:layout_below="@+id/nextWeek"
+        android:layout_toRightOf="@+id/chartDatesTitle"
+        app:srcCompat="@drawable/down_arrow"/>
 
-        <ImageView
-            android:id="@+id/nextWeek"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignTop="@+id/chartDatesTitle"
-            android:layout_toRightOf="@+id/chartDatesTitle"
-            android:tint="#FF8F56"
-            app:srcCompat="@drawable/ic_keyboard_arrow_right_white_24dp"/>
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chart"
-            android:layout_width="match_parent"
-            android:layout_height="450dp"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/chartDatesTitle"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="10dp"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp"/>
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/weekArrowInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/weekArrowArrow"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@+id/weekArrowArrow"
+        android:text="Switch between charts of different weeks"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"/>
 
 </RelativeLayout>

@@ -10,20 +10,24 @@ public class AppFontsDB {
         return ourInstance;
     }
 
-    final private String sarif;
-    final private String sanSarif;
+    final private String titleFont;
+    final private String bodyFont;
+    final private String helpScreenFont;
 
     private AppFontsDB() {
 
-        sarif = "fonts/Cubano-Regular.otf";
-        sanSarif = "fonts/GT Eesti Pro Text Book.otf";
+        titleFont = "fonts/Cubano-Regular.otf";
+        bodyFont = "fonts/GT Eesti Pro Text Book.otf";
+        helpScreenFont = "fonts/Stay_Writer.ttf";
     }
 
-    public String getSarif() {
-        return sarif;
+    public String getTitleFont() {
+        return titleFont;
     }
 
-    public String getSanSarif() {
-        return sanSarif;
+    public String getBodyFont() {
+        return bodyFont;
     }
+
+    public String getHelpScreenFont() {return helpScreenFont;}
 }

@@ -32,8 +32,8 @@ public class HelpCounterScreen extends AppCompatActivity {
         bodyText = (TextView)findViewById(R.id.helpBody);
         backButton = (ImageView)findViewById(R.id.backButton);
 
-        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getSanSarif());
+        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getBodyFont());
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

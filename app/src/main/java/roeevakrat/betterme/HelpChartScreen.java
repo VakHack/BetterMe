@@ -32,8 +32,8 @@ public class HelpChartScreen extends AppCompatActivity {
         bodyText = (TextView)findViewById(R.id.WeeklyChartHelpBody);
         backToChartButton = (ImageView)findViewById(R.id.backToWeeklyChart);
 
-        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getSanSarif());
+        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getBodyFont());
 
         backToChartButton.setOnClickListener(new View.OnClickListener() {
             @Override

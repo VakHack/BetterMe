@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ public class WeeklyChart extends AppCompatActivity {
     ImageView backButton;
     ImageView lastWeekButton;
     ImageView nextWeekButton;
-    Button trendButton;
+    TextView trendButton;
     ImageView helpButton;
 
     DateGenerator fromDate;
@@ -52,6 +51,14 @@ public class WeeklyChart extends AppCompatActivity {
     String datesRange;
 
     boolean isTrendButtonPressed;
+
+    //help layer views
+    TextView overlay;
+    TextView helpTextTrendButton;
+    TextView helpTextWeekArrow;
+    Typeface helpTextFont;
+    ImageView arrowTrendButton;
+    ImageView arrowWeekArrow;
 
     RegressionTrendLineCalculator regressionCalculator;
 
@@ -78,26 +85,10 @@ public class WeeklyChart extends AppCompatActivity {
         chart.invalidate();
     }
 
-    private void addNegativeFeedbackPic(){
-
-    }
-
-    private void addPositiveFeedbackPic(){
-
-    }
-
     private void addWeeklyTrend(){
 
         chart.setData(multiPlotData);
         chart.invalidate();
-
-        if(regressionCalculator.isTrendSlopePositive()){
-
-            addNegativeFeedbackPic();
-        } else {
-
-            addPositiveFeedbackPic();
-        }
     }
 
     private void sharedPrefToPlotEntries(){
@@ -153,7 +144,7 @@ public class WeeklyChart extends AppCompatActivity {
         mainPlot.setLineWidth(2.5f);
         mainPlot.setValueTextSize(20);
         mainPlot.setValueTextColor(Color.rgb(255, 241, 168));
-        Typeface tf = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getSanSarif());
+        Typeface tf = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont());
         mainPlot.setValueTypeface(tf);
         mainPlot.setValueFormatter(new WeeklyChartDataFormatter());
         //mainPlot.setMode(LineDataSet.Mode.STEPPED);
@@ -177,7 +168,7 @@ public class WeeklyChart extends AppCompatActivity {
         //trend line edit
         trendPlot.setColor(Color.rgb(255, 143, 86));
         trendPlot.enableDashedLine(20f, 5f, 0f);
-        trendPlot.setLineWidth(2f);
+        trendPlot.setLineWidth(3f);
         trendPlot.setDrawValues(false);
         trendPlot.setDrawFilled(false);
         trendPlot.setDrawCircleHole(false);
@@ -193,6 +184,15 @@ public class WeeklyChart extends AppCompatActivity {
     private boolean isWeeklyChartFirstRun(){
 
         return countersMap.getBoolean(KeysDB.getInstance().WEEKLY_CHART_SCREEN_FIRST_RUN, true);
+    }
+
+    private void setHelpScreenViewVisibility(int visibility){
+
+        helpTextTrendButton.setVisibility(visibility);
+        helpTextWeekArrow.setVisibility(visibility);
+        overlay.setVisibility(visibility);
+        arrowTrendButton.setVisibility(visibility);
+        arrowWeekArrow.setVisibility(visibility);
     }
 
     @Override
@@ -216,13 +216,25 @@ public class WeeklyChart extends AppCompatActivity {
         chart = (LineChart)findViewById(R.id.chart);
         counterTitle = (TextView)findViewById(R.id.weekChartTitle);
         dateTitle = (TextView)findViewById(R.id.chartDatesTitle);
-        trendButton = (Button) findViewById(R.id.weeklyTrendButton);
+        trendButton = (TextView) findViewById(R.id.trendButton);
         helpButton = (ImageView)findViewById(R.id.weeklyChartHelpButton);
 
+        helpTextTrendButton = (TextView)findViewById(R.id.trendButtonInfo);
+        helpTextWeekArrow = (TextView)findViewById(R.id.weekArrowInfo);
+        overlay = (TextView)findViewById(R.id.overlay);
+        arrowTrendButton = (ImageView)findViewById(R.id.trendButtonArrow);
+        arrowWeekArrow = (ImageView)findViewById(R.id.weekArrowArrow);
+
         //set fonts
-        setTextFont(counterTitle, titleFont, AppFontsDB.getInstance().getSarif());
-        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getSanSarif());
-        trendButton.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getSarif()));
+        setTextFont(counterTitle, titleFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getBodyFont());
+        trendButton.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+
+        helpTextFont = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont());
+        helpTextTrendButton.setTypeface(helpTextFont);
+        helpTextWeekArrow.setTypeface(helpTextFont);
+
+        setHelpScreenViewVisibility(View.INVISIBLE);
 
         //set date range
         initDateRangeAccordingToCurrentWeek();
@@ -288,8 +300,18 @@ public class WeeklyChart extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent chartHelp = new Intent(WeeklyChart.this, HelpChartScreen.class);
-                startActivity(chartHelp);
+                setHelpScreenViewVisibility(View.VISIBLE);
+
+//                Intent chartHelp = new Intent(WeeklyChart.this, HelpChartScreen.class);
+//                startActivity(chartHelp);
+            }
+        });
+
+        overlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setHelpScreenViewVisibility(View.INVISIBLE);
             }
         });
     }
