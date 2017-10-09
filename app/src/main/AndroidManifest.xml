@@ -24,10 +24,6 @@
             android:name=".CounterScreen"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".HelpCounterScreen"
-            android:screenOrientation="portrait">
-        </activity>
 
         <receiver android:name=".Widget">
             <intent-filter>
@@ -49,8 +45,6 @@
         <activity android:name=".PositiveFeedbackScreen">
         </activity>
         <activity android:name=".NegativeFeedbackScreen">
-        </activity>
-        <activity android:name=".HelpChartScreen">
         </activity>
 
     </application>

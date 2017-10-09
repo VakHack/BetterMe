@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,12 +68,6 @@ public class WeeklyChart extends AppCompatActivity {
         tv.setTypeface(tf);
     }
 
-    private void initDateRangeAccordingToCurrentWeek(){
-
-        fromDate.setDateToDayInCurrentWeek(1);
-        toDate.setDateToDayInCurrentWeek(7);
-    }
-
     private void updateRangeOfDatesByInterval(int interval){
 
         fromDate.addDaysToDate(interval);
@@ -97,18 +92,19 @@ public class WeeklyChart extends AppCompatActivity {
         chartEntries = new ArrayList<>();
         DateGenerator iterateDates = new DateGenerator(fromDate);
 
-        for(int i = 1; i <= 7; ++i) {
+        for(int i = 0; i < 7; ++i) {
 
-            iterateDates.setDateToDayInCurrentWeek(i);
             chartEntries.add(new Entry(i, countersMap.getInt(iterateDates.getDate(), 0)));
+            iterateDates.addDaysToDate(1);
         }
 
         //add entries to trend plot
         regressionCalculator = new RegressionTrendLineCalculator(this.getApplicationContext(), fromDate.getDate(), toDate.getDate());
 
+        //creating trend line by passing line between the starting date linear-regression value to the last date value
         trendEntries = new ArrayList<>();
-        trendEntries.add(new Entry(1, regressionCalculator.predictYValOnRegressionPlot(1)));
-        trendEntries.add(new Entry(7, regressionCalculator.predictYValOnRegressionPlot(7)));
+        trendEntries.add(new Entry(0, regressionCalculator.predictYValOnRegressionPlot(1)));
+        trendEntries.add(new Entry(6, regressionCalculator.predictYValOnRegressionPlot(7)));
     }
 
     private void insertDataToPlots(){
@@ -122,14 +118,29 @@ public class WeeklyChart extends AppCompatActivity {
         multiPlotData = new LineData(mainPlot, trendPlot);
     }
 
+    private String[] getThisWeekDates(){
+
+        String weekDates[] = new String[7];
+
+        DateGenerator dateIncrement = new DateGenerator(fromDate);
+
+        for(int i = 0; i < 7; ++i){
+
+            weekDates[i] = dateIncrement.getDateShort();
+            dateIncrement.addDaysToDate(1);
+        }
+
+        return weekDates;
+    }
+
     private void designChart(){
         //x axis details
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(10);
+        xAxis.setTextSize(12);
         xAxis.setTextColor(Color.WHITE);
-        String[] weekDays = {"", "MON", "TUE", "WED", "THR", "FRI", "SAT", "SUN"};
-        xAxis.setValueFormatter(new WeekChartXAxisValueFormatter(weekDays));
+        String[] weekDates = getThisWeekDates();
+        xAxis.setValueFormatter(new WeekChartXAxisValueFormatter(weekDates));
 
         //delete gridlines
         xAxis.setDrawGridLines(false);
@@ -147,7 +158,6 @@ public class WeeklyChart extends AppCompatActivity {
         Typeface tf = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont());
         mainPlot.setValueTypeface(tf);
         mainPlot.setValueFormatter(new WeeklyChartDataFormatter());
-        //mainPlot.setMode(LineDataSet.Mode.STEPPED);
         mainPlot.setColor(Color.WHITE);
 
         //chart general details
@@ -195,6 +205,25 @@ public class WeeklyChart extends AppCompatActivity {
         arrowWeekArrow.setVisibility(visibility);
     }
 
+    private void weekChangeUpdates(){
+
+        DateGenerator todaysDate = new DateGenerator();
+
+        updateDateTitle();
+        insertDataToPlots();
+        designChart();
+        drawMainPlot();
+
+        if(todaysDate.equals(toDate)){
+
+            nextWeekButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            nextWeekButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,7 +236,7 @@ public class WeeklyChart extends AppCompatActivity {
         isTrendButtonPressed = false;
 
         //initialize dates
-        fromDate = new DateGenerator();
+        fromDate = new DateGenerator(-6);
         toDate = new DateGenerator();
 
         backButton = (ImageView)findViewById(R.id.backToCounter);
@@ -237,8 +266,10 @@ public class WeeklyChart extends AppCompatActivity {
         setHelpScreenViewVisibility(View.INVISIBLE);
 
         //set date range
-        initDateRangeAccordingToCurrentWeek();
         updateDateTitle();
+
+        //when viewing current week - next week view is irrelevant - set it's button view to invisible
+        nextWeekButton.setVisibility(View.INVISIBLE);
 
         insertDataToPlots();
         designChart();
@@ -257,10 +288,7 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
                 updateRangeOfDatesByInterval(-7);
 
-                updateDateTitle();
-                insertDataToPlots();
-                designChart();
-                drawMainPlot();
+                weekChangeUpdates();
             }
         });
 
@@ -269,10 +297,7 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
                 updateRangeOfDatesByInterval(7);
 
-                updateDateTitle();
-                insertDataToPlots();
-                designChart();
-                drawMainPlot();
+                weekChangeUpdates();
             }
         });
 
@@ -301,9 +326,6 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
 
                 setHelpScreenViewVisibility(View.VISIBLE);
-
-//                Intent chartHelp = new Intent(WeeklyChart.this, HelpChartScreen.class);
-//                startActivity(chartHelp);
             }
         });
 

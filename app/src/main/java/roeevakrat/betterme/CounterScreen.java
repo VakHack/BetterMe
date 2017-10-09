@@ -14,12 +14,11 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v4.app.NotificationCompat;
-
 import android.os.*;
 
 public class CounterScreen extends AppCompatActivity {
 
-    //tracker title
+    //counter title
     TextView counterTitleTop;
     TextView counterTitleMid;
     TextView counterTitleBottom;
@@ -28,9 +27,8 @@ public class CounterScreen extends AppCompatActivity {
     TextView dateTitle;
     Typeface dateFont;
 
-    //tracker buttons
+    //screen buttons
     ImageView counterButton;
-    ImageView counterMinusButton;
     ImageView helpButton;
     ImageView chartButton;
     ImageView yesterdayButton;
@@ -38,22 +36,38 @@ public class CounterScreen extends AppCompatActivity {
     TextView counterView;
     Typeface counterViewFont;
 
+    //menu bar views
+    ImageView whiteMenuButton;
+    ImageView blackMenuButton;
+    View menuLayout;
+
+    //help screen view
+    TextView overlay;
+    ImageView counterButtonHelpArrow;
+    TextView counterButtonHelpText;
+    ImageView counterViewHelpArrow;
+    TextView counterViewHelpText;
+    ImageView yesterdayButtonHelpArrow;
+    TextView yesterdayButtonHelpText;
+    ImageView chartHelpArrow;
+    TextView chartHelpText;
+
     //database
     SharedPreferences countersMap;
     SharedPreferences.Editor countersEditor;
 
-    DateGenerator todaysDate;
+    DateGenerator countersDate;
     FeedbackAssessor assessor;
 
     SoundEffectPlayer screenEffect;
     SoundEffectPlayer buttonEffect;
 
-    TextView overlay;
+    Boolean isMenuBarOn;
 
     private void setTodaysCounter(int val){
 
         countersEditor = countersMap.edit();
-        countersEditor.putInt(todaysDate.getDate(), val);
+        countersEditor.putInt(countersDate.getDate(), val);
         countersEditor.apply();
 
         counterView.setText(String.valueOf(val));
@@ -66,12 +80,12 @@ public class CounterScreen extends AppCompatActivity {
 
     private void refreshCounter(){
 
-        counterView.setText(String.valueOf(countersMap.getInt(todaysDate.getDate(), 0)));
+        counterView.setText(String.valueOf(countersMap.getInt(countersDate.getDate(), 0)));
     }
 
     private void refreshCurrentDate(){
 
-        dateTitle.setText(todaysDate.getDate());
+        dateTitle.setText(countersDate.getDate());
     }
 
     private void goToFeedbackScreen(int daysSinceFirstRun){
@@ -88,32 +102,10 @@ public class CounterScreen extends AppCompatActivity {
         }
     }
 
-//    //for debug purposes
-//    private void enterHardCodedValues(){
-//
-//        DateGenerator twoWeeksAgo = new DateGenerator();
-//        twoWeeksAgo.addDaysToDate(-14);
-//
-//        countersEditor = countersMap.edit();
-//        countersEditor.putString(KeysDB.getInstance().FIRST_RUN_DATE, twoWeeksAgo.getDate());
-//        countersEditor.apply();
-//
-//        Random rand = new Random(System.currentTimeMillis());
-//
-//        for(int i = 0; i <=14; ++i){
-//
-//            twoWeeksAgo.addDaysToDate(i);
-//
-//            countersEditor = countersMap.edit();
-//            countersEditor.putInt(twoWeeksAgo.getDate(), rand.nextInt(21));
-//            countersEditor.apply();
-//        }
-//    }
-
     private void setAssessmentFlagToTrue(){
 
         countersEditor = countersMap.edit();
-        countersEditor.putBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + todaysDate.getDate(), true);
+        countersEditor.putBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), true);
         countersEditor.apply();
     }
 
@@ -159,7 +151,7 @@ public class CounterScreen extends AppCompatActivity {
 
                 buttonPressedAnimation();
                 buttonEffect.play();
-                setTodaysCounter(countersMap.getInt(todaysDate.getDate(), 0) + 1);
+                setTodaysCounter(countersMap.getInt(countersDate.getDate(), 0) + 1);
             }
         }, 700);
     }
@@ -171,7 +163,7 @@ public class CounterScreen extends AppCompatActivity {
             setRunByWidgetFlagToFalse();
 
             refreshCurrentDate();
-            setTodaysCounter(countersMap.getInt(todaysDate.getDate(), 0));
+            setTodaysCounter(countersMap.getInt(countersDate.getDate(), 0));
 
             clickCounterButtonAfterDelay();
         }
@@ -180,8 +172,8 @@ public class CounterScreen extends AppCompatActivity {
     private void feedbackCheckAndRun(){
 
         //if today assessment for feedback already preformed - skip feedback method
-        boolean isFeedbackPerformedToday = countersMap.getBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + todaysDate.getDate(), false);
-        int daysSinceFirstRun = todaysDate.calculateDaysSinceDate(countersMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, todaysDate.getDate()));
+        boolean isFeedbackPerformedToday = countersMap.getBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), false);
+        int daysSinceFirstRun = countersDate.calculateDaysSinceDate(countersMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, countersDate.getDate()));
 
         if(!isFeedbackPerformedToday) {
 
@@ -214,6 +206,36 @@ public class CounterScreen extends AppCompatActivity {
 
     }
 
+    private void dateChangeUpdates(){
+
+        DateGenerator todaysDate = new DateGenerator();
+
+        refreshCurrentDate();
+        refreshCounter();
+
+        if(todaysDate.equals(countersDate)){
+
+            tommorowButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            tommorowButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setHelpScreenViewVisibility(int visibility){
+
+        overlay.setVisibility(visibility);
+        counterViewHelpArrow.setVisibility(visibility);
+        counterViewHelpText.setVisibility(visibility);
+        counterButtonHelpArrow.setVisibility(visibility);
+        counterButtonHelpText.setVisibility(visibility);
+        yesterdayButtonHelpText.setVisibility(visibility);
+        yesterdayButtonHelpArrow.setVisibility(visibility);
+        chartHelpText.setVisibility(visibility);
+        chartHelpArrow.setVisibility(visibility);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,15 +245,17 @@ public class CounterScreen extends AppCompatActivity {
         KeysDB.getInstance().PACKAGE_NAME = getApplicationContext().getPackageName();
 
         //initialize date var
-        todaysDate = new DateGenerator();
+        countersDate = new DateGenerator();
         assessor = new FeedbackAssessor(this.getApplicationContext());
 
-        //initialize preferences
+        //initialize shared preferences
         countersMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+
+        //setting menu bar state to "off"
+        isMenuBarOn = false;
 
         //initialize texts and views
         counterButton = (ImageView)findViewById(R.id.counterButton);
-        counterMinusButton = (ImageView)findViewById(R.id.resetCounter);
         yesterdayButton = (ImageView)findViewById(R.id.yesterdayButton);
         tommorowButton = (ImageView)findViewById(R.id.tommorowButton);
         helpButton = (ImageView)findViewById(R.id.helpButton);
@@ -241,10 +265,25 @@ public class CounterScreen extends AppCompatActivity {
         counterTitleTop = (TextView)findViewById(R.id.counterTitleTop);
         counterTitleMid = (TextView)findViewById(R.id.counterTitleMid);
         counterTitleBottom = (TextView)findViewById(R.id.counterTitleBottom);
+
+        //initialize menu bar view
+        menuLayout = findViewById(R.id.menuBar);
+        whiteMenuButton = (ImageView)findViewById(R.id.whiteMenuButton);
+        blackMenuButton = (ImageView)findViewById(R.id.blackMenuButton);
+
+        //initialize help screen views
         overlay = (TextView)findViewById(R.id.overlay);
+        counterButtonHelpArrow = (ImageView)findViewById(R.id.counterHelpArrow);
+        counterButtonHelpText = (TextView) findViewById(R.id.counterHelpText);
+        counterViewHelpArrow = (ImageView)findViewById(R.id.counterViewHelpArrow);
+        counterViewHelpText = (TextView) findViewById(R.id.counterViewHelpText);
+        yesterdayButtonHelpArrow = (ImageView)findViewById(R.id.dayButtonHelpArrow);
+        yesterdayButtonHelpText = (TextView)findViewById(R.id.dayButtonHelpText);
+        chartHelpArrow = (ImageView)findViewById(R.id.chartHelpArrow);
+        chartHelpText = (TextView)findViewById(R.id.chartHelpText);
 
         //set help view invisible
-        overlay.setVisibility(View.INVISIBLE);
+        setHelpScreenViewVisibility(View.INVISIBLE);
 
         //initialize sound effects
         screenEffect = new SoundEffectPlayer(this, R.raw.app_resume);
@@ -256,14 +295,21 @@ public class CounterScreen extends AppCompatActivity {
         setTextFont(counterTitleBottom, titleFont, AppFontsDB.getInstance().getTitleFont());
         setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getBodyFont());
         setTextFont(counterView, counterViewFont, AppFontsDB.getInstance().getTitleFont());
+        setTextFont(counterButtonHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
+        setTextFont(counterViewHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
+        setTextFont(yesterdayButtonHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
+        setTextFont(chartHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
 
         screenEffect.play();
+
+        clickCounterIfAppCalledByWidget();
 
         refreshCurrentDate();
         refreshCounter();
         feedbackCheckAndRun();
 
-        clickCounterIfAppCalledByWidget();
+        //when viewing today's counter - next day's counter is irrelevant - set it's button view to invisible
+        tommorowButton.setVisibility(View.INVISIBLE);
 
         counterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,20 +318,23 @@ public class CounterScreen extends AppCompatActivity {
                 buttonEffect.play();
                 buttonPressedAnimation();
 
-                setTodaysCounter(countersMap.getInt(todaysDate.getDate(), 0) + 1);
+                setTodaysCounter(countersMap.getInt(countersDate.getDate(), 0) + 1);
             }
         });
 
-        counterMinusButton.setOnClickListener(new View.OnClickListener() {
+        whiteMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                int currentVal = countersMap.getInt(todaysDate.getDate(), 0);
+                menuLayout.setVisibility(View.VISIBLE);
+            }
+        });
 
-                if(currentVal > 0){
+        blackMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    setTodaysCounter(currentVal - 1);
-                }
+                menuLayout.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -293,7 +342,7 @@ public class CounterScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-            overlay.setVisibility(View.VISIBLE);
+            setHelpScreenViewVisibility(View.VISIBLE);
             }
         });
 
@@ -310,10 +359,9 @@ public class CounterScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                todaysDate.addDaysToDate(-1);
+                countersDate.addDaysToDate(-1);
 
-                refreshCurrentDate();
-                refreshCounter();
+                dateChangeUpdates();
             }
         });
 
@@ -321,10 +369,9 @@ public class CounterScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                todaysDate.addDaysToDate(1);
+                countersDate.addDaysToDate(1);
 
-                refreshCurrentDate();
-                refreshCounter();
+                dateChangeUpdates();
             }
         });
 
@@ -332,7 +379,7 @@ public class CounterScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                overlay.setVisibility(View.INVISIBLE);
+                setHelpScreenViewVisibility(View.INVISIBLE);
             }
         });
 
@@ -342,10 +389,9 @@ public class CounterScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        refreshCurrentDate();
-
         clickCounterIfAppCalledByWidget();
 
+        refreshCurrentDate();
         refreshCounter();
     }
 

@@ -6,29 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#489DD2"
-    android:paddingBottom="25dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="20dp"
     tools:context="roeevakrat.betterme.CounterScreen">
-
-    <ImageView
-        android:id="@+id/resetCounter"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        app:srcCompat="@drawable/minus"/>
 
     <ImageView
         android:id="@+id/chartButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/helpButton"
         android:layout_centerHorizontal="false"
+        android:layout_marginRight="20dp"
         app:srcCompat="@drawable/line_chart"/>
 
     <ImageView
@@ -40,9 +28,19 @@
         android:layout_gravity="left|center_vertical|center_horizontal"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="20dp"
         android:baselineAlignBottom="false"
         app:srcCompat="@drawable/question"/>
+
+    <ImageView
+        android:id="@+id/whiteMenuButton"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        app:srcCompat="@drawable/ic_menu_white_24dp"/>
 
     <TextView
         android:id="@+id/date"
@@ -61,6 +59,8 @@
         android:id="@+id/yesterdayButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false"
         android:layout_below="@+id/helpButton"
         android:layout_centerVertical="false"
         android:layout_toLeftOf="@+id/date"
@@ -71,6 +71,7 @@
         android:id="@+id/tommorowButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="false"
         android:layout_below="@+id/helpButton"
         android:layout_toRightOf="@+id/date"
@@ -86,7 +87,7 @@
         android:layout_alignParentTop="false"
         android:layout_below="@+id/date"
         android:paddingBottom="2dp"
-        android:paddingTop="5dp"
+        android:paddingTop="10dp"
         android:text="Daily"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -122,18 +123,20 @@
 
     <TextView
         android:id="@+id/counterView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:layout_below="@+id/counterTitleBottom"
-        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="15dp"
         android:text="@string/TodaysCounter"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="55sp"
-        tools:text="0"/>
+        android:textSize="55sp"/>
 
     <ImageView
         android:id="@+id/pressedButton"
@@ -144,7 +147,8 @@
         android:layout_alignParentStart="false"
         android:layout_alignParentTop="false"
         android:layout_below="@+id/counterView"
-        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
         android:baselineAlignBottom="false"
         android:paddingBottom="0dp"
         app:srcCompat="@drawable/dislike_pressed"/>
@@ -157,17 +161,179 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:layout_below="@+id/counterView"
-        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
         android:baselineAlignBottom="false"
-        android:paddingBottom="0dp"
         app:srcCompat="@drawable/dislike"/>
+
+    <RelativeLayout
+        android:id="@+id/menuBar"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:background="#FAD36C"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/blackMenuButton"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            app:srcCompat="@drawable/ic_menu_black_24dp"/>
+
+        <TextView
+            android:id="@+id/cloudSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/blackMenuButton"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_weight="1"
+            android:text="Sync with cloud"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/editCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/cloudSync"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="0"
+            android:text="Edit today's counter"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="35dp"
+            android:layout_marginLeft="25dp"
+            android:text="About the developer"
+            android:textSize="18sp"/>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:background="#99000000"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
 
+    <ImageView
+        android:id="@+id/dayButtonHelpArrow"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/yesterdayButton"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="30dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/up_arrow_short"/>
+
+    <TextView
+        android:id="@+id/dayButtonHelpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/dayButtonHelpArrow"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:text="switch between dates"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="35sp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/counterHelpArrow"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/counterHelpText"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/down_arrow_short"/>
+
+    <TextView
+        android:id="@+id/counterHelpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/counterView"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="30dp"
+        android:text="increase counter value"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="40sp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/counterViewHelpArrow"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/counterTitleBottom"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/counterView"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/right_arrow_short"/>
+
+    <TextView
+        android:id="@+id/counterViewHelpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/counterTitleBottom"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="27dp"
+        android:layout_toLeftOf="@+id/counterViewHelpArrow"
+        android:text="counter"
+        android:textColor="@android:color/white"
+        android:textSize="35sp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/chartHelpArrow"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@+id/chartButton"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/right_arrow_short"/>
+
+    <TextView
+        android:id="@+id/chartHelpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="17dp"
+        android:layout_toLeftOf="@+id/chartHelpArrow"
+        android:text="weekly graph"
+        android:textColor="@android:color/white"
+        android:textSize="35sp"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

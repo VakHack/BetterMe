@@ -28,6 +28,15 @@ public class DateGenerator {
         dateStr = dateFormatter.print(date);
     }
 
+    public DateGenerator(int interval){
+
+        date = LocalDate.now();
+        date = date.plusDays(interval);
+
+        dateFormatter = DateTimeFormat.forPattern("dd.MM.yy");
+        dateStr = dateFormatter.print(date);
+    }
+
     public DateGenerator(DateGenerator other){
 
         date = other.date;
@@ -54,6 +63,11 @@ public class DateGenerator {
         return dateStr;
     }
 
+    public String getDateShort(){
+
+        return dateStr.substring(0, 5);
+    }
+
     public void setDateToDayInCurrentWeek(int dayNum){
 
         date = date.withDayOfWeek(dayNum);
@@ -78,7 +92,8 @@ public class DateGenerator {
         return calculateDaysSinceDate(daysSince.dateStr);
     }
 
-    public boolean isEqual(DateGenerator other){
+    public boolean equals(DateGenerator other){
+
         return dateStr.equals(other.dateStr);
     }
 }
