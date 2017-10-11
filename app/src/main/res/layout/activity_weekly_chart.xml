@@ -124,7 +124,7 @@
         android:layout_height="35dp"
         android:layout_marginTop="20dp"
         android:layout_toLeftOf="@+id/trendButton"
-        app:srcCompat="@drawable/left_arrow_short"/>
+        app:srcCompat="@drawable/right_arrow_short"/>
 
     <TextView
         android:id="@+id/trendButtonInfo"
@@ -135,7 +135,7 @@
         android:layout_toLeftOf="@+id/trendButtonArrow"
         android:paddingRight="5dp"
         android:paddingTop="15dp"
-        android:text="Add/Remove trend line to/from weekly chart"
+        android:text="Add trend line to chart"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30sp"/>
