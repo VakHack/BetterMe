@@ -174,7 +174,7 @@
 
         <RelativeLayout
             android:id="@+id/menuBar"
-            android:layout_width="240dp"
+            android:layout_width="280dp"
             android:layout_height="400dp"
             android:layout_alignParentLeft="true"
             android:background="@drawable/menu_bar_background"
@@ -205,11 +205,34 @@
                 android:textSize="18sp"/>
 
             <TextView
-                android:id="@+id/editCounterButton"
+                android:id="@+id/setNotifications"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/cloudSync"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:text="Set notifications"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/notificationsSpinner"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cloudSync"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/setNotifications"
+                android:entries="@array/notificationsSpinnerArr"/>
+
+            <TextView
+                android:id="@+id/editCounterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/setNotifications"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_weight="0"

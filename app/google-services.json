@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "922193616417",
+    "firebase_url": "https://betterme-d036f.firebaseio.com",
+    "project_id": "betterme-d036f",
+    "storage_bucket": "betterme-d036f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922193616417:android:073e45f3a9d4669e",
+        "android_client_info": {
+          "package_name": "roeevakrat.betterme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "922193616417-nh3tkbafsskpns91cmjdnoldve8ssvth.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2WwzBqWEqZlBr8gFl-B9daN2ye6Gd-B4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

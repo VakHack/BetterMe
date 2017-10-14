@@ -17,7 +17,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentStart="false"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="15dp"
         app:srcCompat="@drawable/ic_arrow_back_white_24dp"/>
@@ -26,12 +26,13 @@
         android:id="@+id/syncScreenTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/syncScreenBackButton"
-        android:layout_marginBottom="10dp"
         android:text="Sync your data to our cloud "
         android:textColor="@android:color/white"
         android:textSize="30sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_below="@+id/syncScreenBackButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:id="@+id/syncScreenText"
@@ -40,27 +41,27 @@
         android:layout_alignLeft="@+id/syncScreenTitle"
         android:layout_alignStart="@+id/syncScreenTitle"
         android:layout_below="@+id/syncScreenTitle"
+        android:layout_marginTop="15dp"
         android:text="For a frequent progress backup and to use BetterMe on all of your devices."
         android:textColor="#FAD36C"
-        android:textSize="20sp"/>
+        android:textSize="25sp"/>
 
     <TextView
         android:id="@+id/loginFeedback"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/syncScreenText"
         android:layout_marginTop="20dp"
         android:text="@string/loginFeedback"
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"/>
+        android:textAlignment="textStart"
+        android:textColor="@color/holo_red_dark"
+        android:textSize="18sp"/>
 
     <EditText
         android:id="@+id/loginEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/syncScreenBackButton"
-        android:layout_alignStart="@+id/syncScreenBackButton"
         android:layout_below="@+id/loginFeedback"
         android:layout_marginTop="15dp"
         android:hint="Username or email"
@@ -72,10 +73,10 @@
         android:id="@+id/loginPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/syncScreenBackButton"
-        android:layout_alignStart="@+id/syncScreenBackButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
         android:layout_below="@+id/loginEmail"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="11dp"
         android:hint="Password"
         android:imeActionId="@+id/login"
         android:textColor="@color/White"
@@ -84,7 +85,7 @@
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_below="@+id/loginPassword"
         android:layout_marginTop="20dp"
         android:background="#0E4160"
@@ -94,8 +95,9 @@
     <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_below="@+id/loginButton"
+        android:layout_marginBottom="20dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/white"
         android:text="Register"

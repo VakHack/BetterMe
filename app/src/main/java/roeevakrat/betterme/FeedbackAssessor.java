@@ -3,9 +3,6 @@ package roeevakrat.betterme;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-
-import com.github.mikephil.charting.data.Entry;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -15,58 +12,52 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 public class FeedbackAssessor extends FragmentActivity {
 
-    DateGenerator thisMonday;
-    SharedPreferences countersMap;
+    private SharedPreferences appMap;
 
     FeedbackAssessor(Context context){
 
-        thisMonday = new DateGenerator();
-        thisMonday.setDateToDayInCurrentWeek(1);
-
-        countersMap = context.getApplicationContext().getSharedPreferences("betterMePrefs", MODE_PRIVATE);
+        appMap = context.getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
     }
 
-    private Double weeklyLinearRegressionSlope(DateGenerator firstDayOfWeek){
+    private Double rangeOfDaysLinearRegressionSlope(DateGenerator fromDate, int range){
 
         SimpleRegression weeklyRegression = new SimpleRegression();
-        DateGenerator weekDatesIterator = new DateGenerator(firstDayOfWeek);
+        DateGenerator weekDatesIterator = new DateGenerator(fromDate);
 
-        for(int i = 1; i <= 7; ++i) {
+        for(int i = 0; i < range; ++i) {
 
-            weekDatesIterator.setDateToDayInCurrentWeek(i);
-
-            weeklyRegression.addData(i, countersMap.getInt(weekDatesIterator.getDate(), 0));
+            weeklyRegression.addData(i, appMap.getInt(weekDatesIterator.getDate(), 0));
+            weekDatesIterator.addDaysToDate(1);
         }
 
         return weeklyRegression.getSlope();
     }
 
-    private boolean isThisWeekBetterThanLastWeekTrend(){
+    public boolean isThisWeekTrendBetterThanLastWeekTrend(){
 
         //set to last monday
-        DateGenerator lastMonday = new DateGenerator();
-        lastMonday.addDaysToDate(-7);
-        thisMonday.setDateToDayInCurrentWeek(1);
+        DateGenerator todaysWeek = new DateGenerator(-7);
+        DateGenerator lastWeek = new DateGenerator(-14);
 
-        Log.e("bettermelog", "this week slope: " + weeklyLinearRegressionSlope(thisMonday));
-        Log.e("bettermelog", "last week slope: " + weeklyLinearRegressionSlope(lastMonday));
-
-        return weeklyLinearRegressionSlope(thisMonday) < weeklyLinearRegressionSlope(lastMonday);
+        return rangeOfDaysLinearRegressionSlope(todaysWeek, 7) < rangeOfDaysLinearRegressionSlope(lastWeek, 7);
     }
 
-    private boolean isThisWeekTrendNegative(){
+    public boolean isThisWeekTrendNegative(){
 
-        Log.e("bettermelog", "this week slope: " + weeklyLinearRegressionSlope(thisMonday));
+        DateGenerator todaysWeek = new DateGenerator(-7);
 
-        return weeklyLinearRegressionSlope(thisMonday) < 0;
+        return rangeOfDaysLinearRegressionSlope(todaysWeek, 7) < 0;
     }
 
-    public boolean isDesereveAPositiveFeedback(int daysSinceFirstRun){
+    public boolean isThisDayBetterThanLastDay() {
 
-        if(daysSinceFirstRun == 7){
-            return isThisWeekTrendNegative();
-        } else {
-            return isThisWeekBetterThanLastWeekTrend();
-        }
+        DateGenerator today = new DateGenerator();
+        DateGenerator yesterday = new DateGenerator(-1);
+
+        int todaysCounter = appMap.getInt(today.getDate(), 0);
+        int yesterdaysCounter = appMap.getInt(yesterday.getDate(), 0);
+
+        return todaysCounter < yesterdaysCounter;
     }
+
 }

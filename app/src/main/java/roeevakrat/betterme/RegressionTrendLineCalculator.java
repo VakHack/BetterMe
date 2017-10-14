@@ -30,7 +30,7 @@ public class RegressionTrendLineCalculator extends FragmentActivity {
         DateGenerator from = new DateGenerator(fromDate);
         DateGenerator to = new DateGenerator(toDate);
 
-        int numOfDaysInRange = from.calculateDaysSinceDate(to);
+        int numOfDaysInRange = from.calculateIntervalBetweenDates(to);
 
         for(int i = 0; i <= numOfDaysInRange; ++i) {
 

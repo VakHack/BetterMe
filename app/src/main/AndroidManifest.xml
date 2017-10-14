@@ -35,7 +35,7 @@
                 android:resource="@xml/home_screen_widget_info"/>
         </receiver>
         <receiver
-            android:name=".WidgetBroadcastReceiver"
+            android:name=".WidgetReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>
@@ -48,6 +48,12 @@
         </activity>
         <activity android:name=".CloudSyncScreen">
         </activity>
+
+        <receiver
+            android:name=".NotificationsReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

@@ -23,5 +23,7 @@ public class KeysDB {
     public final String USERNAME = "username";
     public final String LOG_KEY  = "bettermelog";
 
+    public final String NOTIFICATIONS_INTERVAL_CATEGORY = "notificationsInterval";
+
     public String PACKAGE_NAME;
 }

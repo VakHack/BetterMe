@@ -1,6 +1,8 @@
 package roeevakrat.betterme;
 
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import static roeevakrat.betterme.CloudSyncScreen.loginErrors.LOGIN_SUCCESS;
-import static roeevakrat.betterme.CloudSyncScreen.loginErrors.NO_SUCH_USERNAME;
-import static roeevakrat.betterme.CloudSyncScreen.registerErrors.REGISTER_SUCCESS;
-import static roeevakrat.betterme.CloudSyncScreen.registerErrors.USERNAME_TAKEN;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class CloudSyncScreen extends AppCompatActivity {
+
+    private TextView title;
+    private TextView body;
+    private TextView loginFeedbackView;
 
     private Button login;
     private Button register;
@@ -21,33 +27,61 @@ public class CloudSyncScreen extends AppCompatActivity {
     private EditText username;
     private EditText password;
 
-    String userPassword;
-    String userUsername;
+    private String userPassword;
+    private String userUsername;
 
-    TextView loginFeedback;
+    //server auth
+    private FirebaseAuth serverAuth;
 
     //database
-    SharedPreferences appMap;
-    SharedPreferences.Editor appMapEditor;
+    private SharedPreferences appMap;
+    private SharedPreferences.Editor appMapEditor;
 
-    public enum loginErrors{
+    private void addUserDataToSharedprefs(){
 
-        NO_SUCH_USERNAME, PASSWORD_INCORRECT, LOGIN_SUCCESS
+        appMapEditor = appMap.edit();
+        appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
+        appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
+        appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
+        appMapEditor.apply();
     }
 
-    public enum registerErrors{
+    void tryRegister(){
 
-       USERNAME_TAKEN, PASSWORD_ILLEGAL, REGISTER_SUCCESS
+        serverAuth.createUserWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(task.isSuccessful()) {
+
+                    loginFeedbackView.setText("Registered successfully");
+                    addUserDataToSharedprefs();
+
+                } else {
+
+                    loginFeedbackView.setText(task.getException().getMessage());
+                }
+            }
+        });
     }
 
-    loginErrors tryLogin(){
+    void tryLogin(){
 
-        return LOGIN_SUCCESS;
-    }
+        serverAuth.signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-    registerErrors tryRegister(){
+                if(task.isSuccessful()) {
 
-        return REGISTER_SUCCESS;
+                    loginFeedbackView.setText("Logged-in successfully");
+                    addUserDataToSharedprefs();
+
+                } else {
+
+                    loginFeedbackView.setText(task.getException().getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -55,46 +89,25 @@ public class CloudSyncScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud_sync_screen);
 
-        //init activity views
+        //initialize activity views
         login = (Button)findViewById(R.id.loginButton);
         register = (Button)findViewById(R.id.registerButton);
         username = (EditText)findViewById(R.id.loginEmail);
         password = (EditText)findViewById(R.id.loginPassword);
-        loginFeedback = (TextView)findViewById(R.id.loginFeedback);
+        loginFeedbackView = (TextView)findViewById(R.id.loginFeedback);
+        title = (TextView)findViewById(R.id.syncScreenTitle);
+        body = (TextView)findViewById(R.id.syncScreenText);
+
+        //set fonts
+        title.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        body.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
+        loginFeedbackView.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
 
         //initialize shared preferences
         appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                userUsername = username.getText().toString();
-                userPassword = password.getText().toString();
-
-                loginErrors feedback = tryLogin();
-
-                if(feedback == LOGIN_SUCCESS){
-
-                    loginFeedback.setText("Logged in successfully");
-
-                    //add user details to sharedprefs
-                    appMapEditor = appMap.edit();
-                    appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
-                    appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
-                    appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
-                    appMapEditor.apply();
-
-                } else if (feedback == NO_SUCH_USERNAME) {
-
-                    loginFeedback.setText("No such username. If you have not register, please do so");
-
-                } else {
-
-                    loginFeedback.setText("Incorrect password. Please try again");
-                }
-            }
-        });
+        //initialize auth object
+        serverAuth = FirebaseAuth.getInstance();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,28 +116,20 @@ public class CloudSyncScreen extends AppCompatActivity {
                 userUsername = username.getText().toString();
                 userPassword = password.getText().toString();
 
-                registerErrors feedback = tryRegister();
-
-                if(feedback == REGISTER_SUCCESS){
-
-                    loginFeedback.setText("Registered and logged-in successfully");
-
-                    //add user details to sharedprefs
-                    appMapEditor = appMap.edit();
-                    appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
-                    appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
-                    appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
-                    appMapEditor.apply();
-
-                } else if (feedback == USERNAME_TAKEN) {
-
-                    loginFeedback.setText("Username or email is already taken, please try another one");
-
-                } else {
-
-                    loginFeedback.setText("Password too short, should be at least 5 characters");
-                }
+                tryRegister();
             }
         });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                userUsername = username.getText().toString();
+                userPassword = password.getText().toString();
+
+                tryLogin();
+            }
+        });
+
     }
 }

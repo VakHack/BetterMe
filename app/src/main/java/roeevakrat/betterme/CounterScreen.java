@@ -1,5 +1,7 @@
 package roeevakrat.betterme;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,64 +13,70 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.support.v4.app.NotificationCompat;
 import android.os.*;
 import org.apache.commons.lang3.StringUtils;
+import java.util.Calendar;
 
 public class CounterScreen extends AppCompatActivity {
 
     //counter title
-    TextView counterTitleTop;
-    TextView counterTitleMid;
-    TextView counterTitleBottom;
+    private TextView counterTitleTop;
+    private TextView counterTitleMid;
+    private TextView counterTitleBottom;
 
-    Typeface titleFont;
-    TextView dateTitle;
-    Typeface dateFont;
+    private Typeface titleFont;
+    private TextView dateTitle;
+    private Typeface dateFont;
 
     //screen buttons
-    ImageView counterButton;
-    ImageView helpButton;
-    ImageView chartButton;
-    ImageView yesterdayButton;
-    ImageView tomorrowButton;
-    TextView counterView;
-    Typeface counterViewFont;
+    private ImageView counterButton;
+    private ImageView helpButton;
+    private ImageView chartButton;
+    private ImageView yesterdayButton;
+    private ImageView tomorrowButton;
+    private TextView counterView;
+    private Typeface counterViewFont;
 
     //menu bar views
-    ImageView whiteMenuButton;
-    ImageView blackMenuButton;
-    View menuLayout;
-    EditText editCounterLine;
-    TextView editCounterButton;
-    ImageView enterEdit;
-    boolean isMenuBarOn;
-    boolean isEditCounterLineOn;
+    private ImageView whiteMenuButton;
+    private ImageView blackMenuButton;
+    private View menuLayout;
+    private EditText editCounterLine;
+    private TextView editCounterButton;
+    private ImageView enterEdit;
+    private TextView syncScreenButton;
+    private boolean isMenuBarOn;
+    private boolean isEditCounterLineOn;
+    Spinner notificationsSpinner;
 
     //help screen view
-    TextView overlay;
-    ImageView counterButtonHelpArrow;
-    TextView counterButtonHelpText;
-    ImageView counterViewHelpArrow;
-    TextView counterViewHelpText;
-    ImageView yesterdayButtonHelpArrow;
-    TextView yesterdayButtonHelpText;
-    ImageView chartHelpArrow;
-    TextView chartHelpText;
+    private TextView overlay;
+    private ImageView counterButtonHelpArrow;
+    private TextView counterButtonHelpText;
+    private ImageView counterViewHelpArrow;
+    private TextView counterViewHelpText;
+    private ImageView yesterdayButtonHelpArrow;
+    private TextView yesterdayButtonHelpText;
+    private ImageView chartHelpArrow;
+    private TextView chartHelpText;
 
     //database
-    SharedPreferences appMap;
-    SharedPreferences.Editor appMapEditor;
+    private SharedPreferences appMap;
+    private SharedPreferences.Editor appMapEditor;
 
-    DateGenerator countersDate;
-    FeedbackAssessor assessor;
+    private DateGenerator countersDate;
+    private FeedbackAssessor assessor;
 
-    SoundEffectPlayer screenEffect;
-    SoundEffectPlayer buttonEffect;
+    private SoundEffectPlayer screenEffect;
+    private SoundEffectPlayer buttonEffect;
 
+    NotificationsAlarmSetter alarmSetter;
 
     private void setTodaysCounter(int val){
 
@@ -92,27 +100,6 @@ public class CounterScreen extends AppCompatActivity {
     private void refreshCurrentDate(){
 
         dateTitle.setText(countersDate.getDate());
-    }
-
-    private void goToFeedbackScreen(int daysSinceFirstRun){
-
-        if(assessor.isDesereveAPositiveFeedback(daysSinceFirstRun))
-        {
-            Intent positiveFeedbackIntent = new Intent(CounterScreen.this, PositiveFeedbackScreen.class);
-            startActivity(positiveFeedbackIntent);
-
-        } else {
-
-            Intent negativeFeedbackIntent = new Intent(CounterScreen.this, NegativeFeedbackScreen.class);
-            startActivity(negativeFeedbackIntent);
-        }
-    }
-
-    private void setAssessmentFlagToTrue(){
-
-        appMapEditor = appMap.edit();
-        appMapEditor.putBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), true);
-        appMapEditor.apply();
     }
 
     private void buttonPressedAnimation(){
@@ -175,21 +162,42 @@ public class CounterScreen extends AppCompatActivity {
         }
     }
 
-    private void feedbackCheckAndRun(){
+//    private void setAssessmentFlagToTrue(){
+//
+//        appMapEditor = appMap.edit();
+//        appMapEditor.putBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), true);
+//        appMapEditor.apply();
+//    }
 
-        //if today assessment for feedback already preformed - skip feedback method
-        boolean isFeedbackPerformedToday = appMap.getBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), false);
-        int daysSinceFirstRun = countersDate.calculateDaysSinceDate(appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, countersDate.getDate()));
+    //    private void goToFeedbackScreen(int daysSinceFirstRun){
+//
+//        if(assessor.isDesereveAPositiveFeedback(daysSinceFirstRun))
+//        {
+//            Intent positiveFeedbackIntent = new Intent(CounterScreen.this, PositiveFeedbackScreen.class);
+//            startActivity(positiveFeedbackIntent);
+//
+//        } else {
+//
+//            Intent negativeFeedbackIntent = new Intent(CounterScreen.this, NegativeFeedbackScreen.class);
+//            startActivity(negativeFeedbackIntent);
+//        }
+//    }
 
-        if(!isFeedbackPerformedToday) {
-
-            setAssessmentFlagToTrue();
-
-            if (daysSinceFirstRun > 0 && daysSinceFirstRun % 7 == 0) {
-                goToFeedbackScreen(daysSinceFirstRun);
-            }
-        }
-    }
+//    private void feedbackCheckAndRun(){
+//
+//        //if today assessment for feedback already preformed - skip feedback method
+//        boolean isFeedbackPerformedToday = appMap.getBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), false);
+//        int daysSinceFirstRun = countersDate.calculateIntervalBetweenDates(appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, countersDate.getDate()));
+//
+//        if(!isFeedbackPerformedToday) {
+//
+//            setAssessmentFlagToTrue();
+//
+//            if (daysSinceFirstRun > 0 && daysSinceFirstRun % 7 == 0) {
+//                goToFeedbackScreen(daysSinceFirstRun);
+//            }
+//        }
+//    }
 
     private void createWidgetInstallNotification(){
 
@@ -202,8 +210,7 @@ public class CounterScreen extends AppCompatActivity {
                 .setContentText("Install BetterMe home-screen button for an easier daily bad-habit tracking!")
                 .setSmallIcon(R.drawable.dislike)
                 .setAutoCancel(true);
-                //.setSound(defaultSoundUri)
-                //.setContentIntent(pendingIntent);
+
 
         android.app.NotificationManager notificationManager =
                 (android.app.NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -279,6 +286,8 @@ public class CounterScreen extends AppCompatActivity {
         editCounterLine = (EditText)findViewById(R.id.editCounterLine);
         editCounterButton = (TextView)findViewById(R.id.editCounterButton);
         enterEdit = (ImageView)findViewById(R.id.enterEdit);
+        syncScreenButton = (TextView)findViewById(R.id.cloudSync);
+        notificationsSpinner = (Spinner)findViewById(R.id.notificationsSpinner);
 
         //initialize help screen views
         overlay = (TextView)findViewById(R.id.overlay);
@@ -303,6 +312,9 @@ public class CounterScreen extends AppCompatActivity {
         screenEffect = new SoundEffectPlayer(this, R.raw.app_resume);
         buttonEffect = new SoundEffectPlayer(this, R.raw.counter_pressed);
 
+        //set the notifications alarm
+        alarmSetter = new NotificationsAlarmSetter(this);
+
         //update texts fonts
         setTextFont(counterTitleTop, titleFont, AppFontsDB.getInstance().getTitleFont());
         setTextFont(counterTitleMid, titleFont, AppFontsDB.getInstance().getTitleFont());
@@ -320,11 +332,11 @@ public class CounterScreen extends AppCompatActivity {
 
         refreshCurrentDate();
         refreshCounter();
-        feedbackCheckAndRun();
+        //feedbackCheckAndRun();
 
         //when viewing today's counter - next day's counter is irrelevant - set it's button view to invisible
         tomorrowButton.setVisibility(View.INVISIBLE);
-
+        
         counterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -413,7 +425,7 @@ public class CounterScreen extends AppCompatActivity {
                 isEditCounterLineOn = false;
 
                 editCounterLine.setVisibility(View.INVISIBLE);
-                editCounterButton.setVisibility(View.INVISIBLE);
+                enterEdit.setVisibility(View.INVISIBLE);
             }
             }
         });
@@ -443,6 +455,43 @@ public class CounterScreen extends AppCompatActivity {
             public void onClick(View view) {
 
                 menuLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        syncScreenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent syncScreenIntent = new Intent(CounterScreen.this, CloudSyncScreen.class);
+                startActivity(syncScreenIntent);
+            }
+        });
+
+        notificationsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String selectedItem = adapterView.getItemAtPosition(i).toString();
+
+                if(selectedItem.equals("Daily"))
+                {
+                    alarmSetter.setNotificationsAlarm(AlarmManager.INTERVAL_DAY);
+
+                } else if(selectedItem.equals("Weekly")){
+
+                    alarmSetter.setNotificationsAlarm(AlarmManager.INTERVAL_DAY * 7);
+
+                } else {
+
+                    alarmSetter.cancelNotificationsAlarm();
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 

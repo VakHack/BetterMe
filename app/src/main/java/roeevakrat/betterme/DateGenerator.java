@@ -1,15 +1,9 @@
 package roeevakrat.betterme;
 
-import android.util.Log;
-
-import com.github.mikephil.charting.renderer.DataRenderer;
-
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import java.util.Calendar;
 
 /**
  * Created by Administrator on 20/09/2017.
@@ -80,16 +74,16 @@ public class DateGenerator {
         dateStr = dateFormatter.print(date);
     }
 
-    public int calculateDaysSinceDate(String daysSince){
+    public int calculateIntervalBetweenDates(String daysSince){
 
         LocalDate givenDate = dateFormatter.parseLocalDate(daysSince);
 
-        return Days.daysBetween(date, givenDate).getDays();
+        return Math.abs(Days.daysBetween(date, givenDate).getDays());
     }
 
-    public int calculateDaysSinceDate(DateGenerator daysSince) {
+    public int calculateIntervalBetweenDates(DateGenerator daysSince) {
 
-        return calculateDaysSinceDate(daysSince.dateStr);
+        return calculateIntervalBetweenDates(daysSince.dateStr);
     }
 
     public boolean equals(DateGenerator other){

@@ -23,7 +23,7 @@ import java.util.Calendar;
 import static android.content.Context.MODE_PRIVATE;
 import static roeevakrat.betterme.R.id.counterView;
 
-public class WidgetBroadcastReceiver extends BroadcastReceiver {
+public class WidgetReceiver extends BroadcastReceiver {
 
     //database
     SharedPreferences appMap;
