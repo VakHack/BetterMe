@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +24,7 @@ import java.util.List;
 
 public class WeeklyChart extends AppCompatActivity {
 
-    SharedPreferences countersMap;
+    SharedPreferences appMap;
     LineChart chart;
 
     List<Entry> chartEntries;
@@ -94,7 +93,7 @@ public class WeeklyChart extends AppCompatActivity {
 
         for(int i = 0; i < 7; ++i) {
 
-            chartEntries.add(new Entry(i, countersMap.getInt(iterateDates.getDate(), 0)));
+            chartEntries.add(new Entry(i, appMap.getInt(iterateDates.getDate(), 0)));
             iterateDates.addDaysToDate(1);
         }
 
@@ -191,11 +190,6 @@ public class WeeklyChart extends AppCompatActivity {
         dateTitle.setText(datesRange);
     }
 
-    private boolean isWeeklyChartFirstRun(){
-
-        return countersMap.getBoolean(KeysDB.getInstance().WEEKLY_CHART_SCREEN_FIRST_RUN, true);
-    }
-
     private void setHelpScreenViewVisibility(int visibility){
 
         helpTextTrendButton.setVisibility(visibility);
@@ -224,13 +218,81 @@ public class WeeklyChart extends AppCompatActivity {
         }
     }
 
+    private DateGenerator getFirstRunDate(){
+
+        DateGenerator today = new DateGenerator();
+        String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, today.getDate());
+
+        return new DateGenerator(firstRunDateStr);
+    }
+
+    private boolean isThisTheFirstWeek(){
+
+        DateGenerator firstRun = getFirstRunDate();
+        DateGenerator iterateDates = new DateGenerator();
+
+        for(int i = 7; i >= 0; --i){
+
+            if(iterateDates.equals(firstRun)){
+
+                return true;
+            }
+
+            iterateDates.addDaysToDate(-1);
+        }
+
+        return false;
+    }
+
+    private boolean isThisTheCurrentWeek(){
+
+        DateGenerator today = new DateGenerator();
+        DateGenerator iterateDates = new DateGenerator(toDate);
+
+        for(int i = 7; i >= 0; --i){
+
+            if(iterateDates.equals(today)){
+
+                return true;
+            }
+
+            iterateDates.addDaysToDate(-1);
+        }
+
+        return false;
+    }
+
+    private void hideLastWeekButtonIfFirstWeek(){
+
+        if(isThisTheFirstWeek()){
+
+            lastWeekButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            lastWeekButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideNextWeekButtonIfCurrentWeek(){
+
+        if(isThisTheCurrentWeek()){
+
+            nextWeekButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            nextWeekButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekly_chart);
 
         //initialize preferences
-        countersMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //initialize trend button to 'off' state
         isTrendButtonPressed = false;
@@ -269,7 +331,10 @@ public class WeeklyChart extends AppCompatActivity {
         updateDateTitle();
 
         //when viewing current week - next week view is irrelevant - set it's button view to invisible
-        nextWeekButton.setVisibility(View.INVISIBLE);
+        hideNextWeekButtonIfCurrentWeek();
+
+        //if this is the first week of app using - previous weeks are irrelevant
+        hideLastWeekButtonIfFirstWeek();
 
         insertDataToPlots();
         designChart();
@@ -288,6 +353,7 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
                 updateRangeOfDatesByInterval(-7);
 
+                hideLastWeekButtonIfFirstWeek();
                 weekChangeUpdates();
             }
         });
@@ -297,6 +363,7 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
                 updateRangeOfDatesByInterval(7);
 
+                hideNextWeekButtonIfCurrentWeek();
                 weekChangeUpdates();
             }
         });
@@ -311,6 +378,7 @@ public class WeeklyChart extends AppCompatActivity {
 
                     trendButton.setText("Trend Off");
                     addWeeklyTrend();
+
                 }else{
 
                     isTrendButtonPressed = false;
@@ -326,6 +394,9 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
 
                 setHelpScreenViewVisibility(View.VISIBLE);
+
+                lastWeekButton.setVisibility(View.VISIBLE);
+                nextWeekButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -334,6 +405,8 @@ public class WeeklyChart extends AppCompatActivity {
             public void onClick(View view) {
 
                 setHelpScreenViewVisibility(View.INVISIBLE);
+                hideLastWeekButtonIfFirstWeek();
+                hideNextWeekButtonIfCurrentWeek();
             }
         });
     }

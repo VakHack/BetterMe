@@ -1,8 +1,9 @@
 package roeevakrat.betterme;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -20,8 +21,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.support.v4.app.NotificationCompat;
 import android.os.*;
+import android.widget.Toast;
+
 import org.apache.commons.lang3.StringUtils;
-import java.util.Calendar;
 
 public class CounterScreen extends AppCompatActivity {
 
@@ -29,10 +31,7 @@ public class CounterScreen extends AppCompatActivity {
     private TextView counterTitleTop;
     private TextView counterTitleMid;
     private TextView counterTitleBottom;
-
-    private Typeface titleFont;
     private TextView dateTitle;
-    private Typeface dateFont;
 
     //screen buttons
     private ImageView counterButton;
@@ -41,7 +40,6 @@ public class CounterScreen extends AppCompatActivity {
     private ImageView yesterdayButton;
     private ImageView tomorrowButton;
     private TextView counterView;
-    private Typeface counterViewFont;
 
     //menu bar views
     private ImageView whiteMenuButton;
@@ -51,9 +49,10 @@ public class CounterScreen extends AppCompatActivity {
     private TextView editCounterButton;
     private ImageView enterEdit;
     private TextView syncScreenButton;
-    private boolean isMenuBarOn;
     private boolean isEditCounterLineOn;
-    Spinner notificationsSpinner;
+    private Spinner notificationsSpinner;
+    private TextView notificationsSetter;
+    private TextView aboutMeButton;
 
     //help screen view
     private TextView overlay;
@@ -71,12 +70,13 @@ public class CounterScreen extends AppCompatActivity {
     private SharedPreferences.Editor appMapEditor;
 
     private DateGenerator countersDate;
-    private FeedbackAssessor assessor;
 
     private SoundEffectPlayer screenEffect;
     private SoundEffectPlayer buttonEffect;
 
     NotificationsAlarmSetter alarmSetter;
+
+    DateGenerator firstRunDate;
 
     private void setTodaysCounter(int val){
 
@@ -87,9 +87,12 @@ public class CounterScreen extends AppCompatActivity {
         counterView.setText(String.valueOf(val));
     }
 
-    private void setTextFont(TextView tv, Typeface tf, String font){
-        tf = Typeface.createFromAsset(getAssets(), font);
-        tv.setTypeface(tf);
+    private void getFirstRunDate(){
+
+        DateGenerator today = new DateGenerator();
+        String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, today.getDate());
+
+        firstRunDate = new DateGenerator(firstRunDateStr);
     }
 
     private void refreshCounter(){
@@ -162,43 +165,6 @@ public class CounterScreen extends AppCompatActivity {
         }
     }
 
-//    private void setAssessmentFlagToTrue(){
-//
-//        appMapEditor = appMap.edit();
-//        appMapEditor.putBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), true);
-//        appMapEditor.apply();
-//    }
-
-    //    private void goToFeedbackScreen(int daysSinceFirstRun){
-//
-//        if(assessor.isDesereveAPositiveFeedback(daysSinceFirstRun))
-//        {
-//            Intent positiveFeedbackIntent = new Intent(CounterScreen.this, PositiveFeedbackScreen.class);
-//            startActivity(positiveFeedbackIntent);
-//
-//        } else {
-//
-//            Intent negativeFeedbackIntent = new Intent(CounterScreen.this, NegativeFeedbackScreen.class);
-//            startActivity(negativeFeedbackIntent);
-//        }
-//    }
-
-//    private void feedbackCheckAndRun(){
-//
-//        //if today assessment for feedback already preformed - skip feedback method
-//        boolean isFeedbackPerformedToday = appMap.getBoolean(KeysDB.getInstance().TODAYS_CHECK_FOR_FEEDBACK + countersDate.getDate(), false);
-//        int daysSinceFirstRun = countersDate.calculateIntervalBetweenDates(appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, countersDate.getDate()));
-//
-//        if(!isFeedbackPerformedToday) {
-//
-//            setAssessmentFlagToTrue();
-//
-//            if (daysSinceFirstRun > 0 && daysSinceFirstRun % 7 == 0) {
-//                goToFeedbackScreen(daysSinceFirstRun);
-//            }
-//        }
-//    }
-
     private void createWidgetInstallNotification(){
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
@@ -221,19 +187,11 @@ public class CounterScreen extends AppCompatActivity {
 
     private void dateChangeUpdates(){
 
-        DateGenerator todaysDate = new DateGenerator();
-
         refreshCurrentDate();
         refreshCounter();
 
-        if(todaysDate.equals(countersDate)){
-
-            tomorrowButton.setVisibility(View.INVISIBLE);
-
-        } else {
-
-            tomorrowButton.setVisibility(View.VISIBLE);
-        }
+        hideTomorrowsButtonIfCurrentDate();
+        hideYesterdayButtonIfFirstDay();
     }
 
     private void setHelpScreenViewVisibility(int visibility){
@@ -247,6 +205,57 @@ public class CounterScreen extends AppCompatActivity {
         yesterdayButtonHelpArrow.setVisibility(visibility);
         chartHelpText.setVisibility(visibility);
         chartHelpArrow.setVisibility(visibility);
+
+        //if help screen presented - shows tomorrow and yesterday button visible for instruction purposes
+        if(visibility == View.VISIBLE){
+
+            tomorrowButton.setVisibility(View.VISIBLE);
+            yesterdayButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideTomorrowsButtonIfCurrentDate(){
+
+        DateGenerator todaysDate = new DateGenerator();
+
+        if(todaysDate.equals(countersDate)){
+
+            tomorrowButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            tomorrowButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideYesterdayButtonIfFirstDay(){
+
+        if(firstRunDate.equals(new DateGenerator())){
+
+            yesterdayButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            yesterdayButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showAboutMeDialog(){
+
+        AlertDialog.Builder aboutDialog = new AlertDialog.Builder(this)
+                .setMessage("I am a junior indie developer, and still quite new to the exquisite world " +
+                        "of app development.\n\nIf you have any kind of note or suggestion, please, do not hesitate to " +
+                        "contact me at:\n\nvakhack@gmail.com")
+                .setCancelable(false)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        aboutDialog.show();
     }
 
     @Override
@@ -259,13 +268,9 @@ public class CounterScreen extends AppCompatActivity {
 
         //initialize date var
         countersDate = new DateGenerator();
-        assessor = new FeedbackAssessor(this.getApplicationContext());
 
         //initialize shared preferences
         appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
-
-        //setting menu bar state to "off"
-        isMenuBarOn = false;
 
         //initialize texts and views
         counterButton = (ImageView)findViewById(R.id.counterButton);
@@ -288,6 +293,8 @@ public class CounterScreen extends AppCompatActivity {
         enterEdit = (ImageView)findViewById(R.id.enterEdit);
         syncScreenButton = (TextView)findViewById(R.id.cloudSync);
         notificationsSpinner = (Spinner)findViewById(R.id.notificationsSpinner);
+        notificationsSetter = (TextView)findViewById(R.id.setNotifications);
+        aboutMeButton = (TextView)findViewById(R.id.about);
 
         //initialize help screen views
         overlay = (TextView)findViewById(R.id.overlay);
@@ -312,19 +319,25 @@ public class CounterScreen extends AppCompatActivity {
         screenEffect = new SoundEffectPlayer(this, R.raw.app_resume);
         buttonEffect = new SoundEffectPlayer(this, R.raw.counter_pressed);
 
-        //set the notifications alarm
+        //initialize the notifications alarm
         alarmSetter = new NotificationsAlarmSetter(this);
 
+        //if it is the first run, set the notifications alarm to daily
+        if(isFirstRunOfCounterScreen()){
+
+            alarmSetter.setNotificationsAlarm(AlarmManager.INTERVAL_DAY);
+        }
+
         //update texts fonts
-        setTextFont(counterTitleTop, titleFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(counterTitleMid, titleFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(counterTitleBottom, titleFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getBodyFont());
-        setTextFont(counterView, counterViewFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(counterButtonHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
-        setTextFont(counterViewHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
-        setTextFont(yesterdayButtonHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
-        setTextFont(chartHelpText, counterViewFont, AppFontsDB.getInstance().getHelpScreenFont());
+        counterTitleTop.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        counterTitleMid.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        counterTitleBottom.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        dateTitle.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
+        counterView.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        counterButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
+        counterViewHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
+        yesterdayButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
+        chartHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
 
         screenEffect.play();
 
@@ -332,10 +345,12 @@ public class CounterScreen extends AppCompatActivity {
 
         refreshCurrentDate();
         refreshCounter();
-        //feedbackCheckAndRun();
 
-        //when viewing today's counter - next day's counter is irrelevant - set it's button view to invisible
-        tomorrowButton.setVisibility(View.INVISIBLE);
+        //when viewing first day's counter last day is irrelevant
+        getFirstRunDate();
+
+        hideTomorrowsButtonIfCurrentDate();
+        hideYesterdayButtonIfFirstDay();
         
         counterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -406,6 +421,9 @@ public class CounterScreen extends AppCompatActivity {
             public void onClick(View view) {
 
                 setHelpScreenViewVisibility(View.INVISIBLE);
+
+                hideYesterdayButtonIfFirstDay();
+                hideTomorrowsButtonIfCurrentDate();
             }
         });
 
@@ -495,11 +513,29 @@ public class CounterScreen extends AppCompatActivity {
             }
         });
 
+        notificationsSetter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                notificationsSpinner.performClick();
+            }
+        });
+
+        aboutMeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showAboutMeDialog();
+            }
+        });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        hideYesterdayButtonIfFirstDay();
 
         clickCounterIfAppCalledByWidget();
 

@@ -26,7 +26,7 @@
         android:layout_alignParentLeft="false"
         android:layout_centerHorizontal="true"
         android:layout_gravity="left|center_vertical|center_horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="20dp"
         android:baselineAlignBottom="false"
@@ -174,9 +174,11 @@
 
         <RelativeLayout
             android:id="@+id/menuBar"
-            android:layout_width="280dp"
-            android:layout_height="400dp"
+            android:layout_width="265dp"
+            android:layout_height="350dp"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="true"
             android:background="@drawable/menu_bar_background"
             android:clickable="true"
             android:orientation="horizontal"
@@ -198,11 +200,12 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/blackMenuButton"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:text="Sync with cloud"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/setNotifications"
@@ -213,26 +216,28 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_weight="1"
-                android:text="Set notifications"
+                android:text="Set notifications frequency"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"/>
 
             <Spinner
                 android:id="@+id/notificationsSpinner"
-                android:layout_width="100dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cloudSync"
+                android:layout_centerHorizontal="false"
                 android:layout_marginLeft="15dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_toRightOf="@+id/setNotifications"
-                android:entries="@array/notificationsSpinnerArr"/>
+                android:entries="@array/notificationsSpinnerArr"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/editCounterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/setNotifications"
+                android:layout_below="@+id/notificationsSpinner"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_weight="0"
@@ -272,7 +277,8 @@
                 android:layout_marginLeft="15dp"
                 android:text="About the developer"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:visibility="visible"/>
         </RelativeLayout>
     </RelativeLayout>
 
@@ -337,7 +343,7 @@
         android:layout_centerInParent="false"
         android:layout_centerVertical="false"
         android:layout_marginTop="30dp"
-        android:text="increase counter value"
+        android:text="counter up"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="40sp"

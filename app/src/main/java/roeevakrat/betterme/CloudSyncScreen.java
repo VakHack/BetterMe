@@ -1,5 +1,6 @@
 package roeevakrat.betterme;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +22,7 @@ public class CloudSyncScreen extends AppCompatActivity {
     private TextView title;
     private TextView body;
     private TextView loginFeedbackView;
+    private ImageView backButton;
 
     private Button login;
     private Button register;
@@ -97,6 +100,7 @@ public class CloudSyncScreen extends AppCompatActivity {
         loginFeedbackView = (TextView)findViewById(R.id.loginFeedback);
         title = (TextView)findViewById(R.id.syncScreenTitle);
         body = (TextView)findViewById(R.id.syncScreenText);
+        backButton = (ImageView)findViewById(R.id.syncScreenBackButton);
 
         //set fonts
         title.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
@@ -128,6 +132,16 @@ public class CloudSyncScreen extends AppCompatActivity {
                 userPassword = password.getText().toString();
 
                 tryLogin();
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent counterScreenIntent = new Intent(CloudSyncScreen.this, CounterScreen.class);
+                startActivity(counterScreenIntent);
+
             }
         });
 

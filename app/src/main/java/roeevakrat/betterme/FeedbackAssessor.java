@@ -14,15 +14,22 @@ public class FeedbackAssessor extends FragmentActivity {
 
     private SharedPreferences appMap;
 
+    public enum DailyFeedback {
+        ZERO_BEHAVIOR, EVEN_BEHAVIOR, ADDED_BEHAVIOR, REDUCED_BEHAVIOR
+    }
+
     FeedbackAssessor(Context context){
 
         appMap = context.getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
     }
 
-    private Double rangeOfDaysLinearRegressionSlope(DateGenerator fromDate, int range){
+    private Double rangeOfDaysLinearRegressionSlope(DateGenerator fromDate, DateGenerator toDate){
 
         SimpleRegression weeklyRegression = new SimpleRegression();
+
         DateGenerator weekDatesIterator = new DateGenerator(fromDate);
+
+        int range = fromDate.calculateIntervalBetweenDates(toDate);
 
         for(int i = 0; i < range; ++i) {
 
@@ -33,23 +40,12 @@ public class FeedbackAssessor extends FragmentActivity {
         return weeklyRegression.getSlope();
     }
 
-    public boolean isThisWeekTrendBetterThanLastWeekTrend(){
+    public boolean isThisRangeOfDatesShowsImprovment(DateGenerator fromDate, DateGenerator toDate){
 
-        //set to last monday
-        DateGenerator todaysWeek = new DateGenerator(-7);
-        DateGenerator lastWeek = new DateGenerator(-14);
-
-        return rangeOfDaysLinearRegressionSlope(todaysWeek, 7) < rangeOfDaysLinearRegressionSlope(lastWeek, 7);
+        return rangeOfDaysLinearRegressionSlope(fromDate, toDate) < 0;
     }
 
-    public boolean isThisWeekTrendNegative(){
-
-        DateGenerator todaysWeek = new DateGenerator(-7);
-
-        return rangeOfDaysLinearRegressionSlope(todaysWeek, 7) < 0;
-    }
-
-    public boolean isThisDayBetterThanLastDay() {
+    public DailyFeedback isThisDayBetterThanLastDay() {
 
         DateGenerator today = new DateGenerator();
         DateGenerator yesterday = new DateGenerator(-1);
@@ -57,7 +53,21 @@ public class FeedbackAssessor extends FragmentActivity {
         int todaysCounter = appMap.getInt(today.getDate(), 0);
         int yesterdaysCounter = appMap.getInt(yesterday.getDate(), 0);
 
-        return todaysCounter < yesterdaysCounter;
+        if(todaysCounter == 0){
+
+            return DailyFeedback.ZERO_BEHAVIOR;
+
+        } else if (todaysCounter > yesterdaysCounter){
+
+            return DailyFeedback.ADDED_BEHAVIOR;
+
+        } else if (todaysCounter < yesterdaysCounter){
+
+            return DailyFeedback.REDUCED_BEHAVIOR;
+        } else {
+
+            return DailyFeedback.EVEN_BEHAVIOR;
+        }
     }
 
 }

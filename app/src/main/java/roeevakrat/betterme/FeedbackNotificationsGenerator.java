@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -21,10 +20,10 @@ public class FeedbackNotificationsGenerator {
 
     private DateGenerator firstRunDate;
 
-    private final String positiveTile = "Well Done!";
-    private final String weeklyPositiveBody = "This week you have shown some improvement";
-    private final String dailyPositiveBody = "This week you have shown some improvement";
-
+    //details about current individual feedback
+    boolean weeklyFeedback;
+    boolean generalFeedback;
+    FeedbackAssessor.DailyFeedback dailyFeedback;
 
     public FeedbackNotificationsGenerator(Context context) {
 
@@ -36,7 +35,7 @@ public class FeedbackNotificationsGenerator {
         firstRunDate = getFirstRunDate();
     }
 
-    public DateGenerator getFirstRunDate(){
+    private DateGenerator getFirstRunDate() {
 
         DateGenerator defaultDate = new DateGenerator();
         String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, defaultDate.getDate());
@@ -44,15 +43,108 @@ public class FeedbackNotificationsGenerator {
         return new DateGenerator(firstRunDateStr);
     }
 
-    public void weeklyNotification(boolean isPositive) {
+    private String getWeeklyNotificationTitle(){
+
+        if(generalFeedback){
+
+            return "BetterMe Report: Well Done!";
+
+        } else {
+
+            return "BetterMe Report: Try Harder";
+        }
+    }
+
+    private String getWeeklyNotificationBody(){
+
+        final String generalyGood = "Your graph shows general improvement trend!";
+        final String generalyBad = "Your graph does not show general improvement trend";
+
+        final String weeklyGood = "\nHowever, this week separately shows an improvement trend. Keep at it!";
+        final String weeklyBad = "\nHowever, this week separately does not show an improvement trend";
+
+        if(generalFeedback && weeklyFeedback){
+
+            return generalyGood;
+
+        } else if(generalFeedback && !weeklyFeedback){
+
+            return generalyGood + weeklyBad;
+
+        } else if(!generalFeedback && !weeklyFeedback){
+
+            return generalyBad;
+
+        } else {
+
+            return generalyBad + weeklyGood;
+        }
+    }
+
+    private String getDailyNotificationTitle(){
+
+        if(dailyFeedback == FeedbackAssessor.DailyFeedback.REDUCED_BEHAVIOR){
+
+            return "BetterMe Report: Well Done!";
+
+        } else if(dailyFeedback == FeedbackAssessor.DailyFeedback.ADDED_BEHAVIOR || dailyFeedback == FeedbackAssessor.DailyFeedback.EVEN_BEHAVIOR) {
+
+            return "BetterMe Report: Try harder";
+
+        } else {
+
+            return "BetterMe Report: Zero Clicks";
+        }
+    }
+
+    private String getDailyNotificationBody(){
+
+        if(dailyFeedback == FeedbackAssessor.DailyFeedback.REDUCED_BEHAVIOR){
+
+            return "You made some progress comparing to yesterday";
+
+        } else if (dailyFeedback == FeedbackAssessor.DailyFeedback.ADDED_BEHAVIOR || dailyFeedback == FeedbackAssessor.DailyFeedback.EVEN_BEHAVIOR) {
+
+            return "Your bad habits number was not reduced comparing to yesterday";
+
+        } else {
+
+            return "Today's bad-habit counter shows zero. Did you forgot to update BetterMe? If not, well done!";
+        }
+    }
+
+    private int pickWeeklyNotificationIcon(){
+
+        if(generalFeedback){
+
+            return R.drawable.trophy;
+        } else {
+
+            return R.drawable.goal;
+        }
+    }
+
+    private int pickDailyNotificationIcon(){
+
+        if(dailyFeedback == FeedbackAssessor.DailyFeedback.REDUCED_BEHAVIOR || dailyFeedback == FeedbackAssessor.DailyFeedback.ZERO_BEHAVIOR){
+
+            return R.drawable.trophy;
+
+        } else {
+
+            return R.drawable.goal;
+        }
+    }
+
+    public void weeklyNotification() {
+
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(appContext)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), R.mipmap.ic_launcher))
-                .setContentTitle("Check Out Our Widget")
+                .setLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), pickWeeklyNotificationIcon()))
+                .setContentTitle(getWeeklyNotificationTitle())
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Install BetterMe home-screen button for an easier daily bad-habit tracking!"))
-                .setSmallIcon(R.drawable.dislike)
+                        .bigText(getWeeklyNotificationBody()))
                 .setAutoCancel(true);
 
         android.app.NotificationManager notificationManager =
@@ -62,15 +154,14 @@ public class FeedbackNotificationsGenerator {
 
     }
 
-    public void dailyNotification(boolean isPositive) {
+    public void dailyNotification() {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(appContext)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), R.mipmap.ic_launcher))
-                .setContentTitle("Check Out Our Widget")
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Install BetterMe home-screen button for an easier daily bad-habit tracking!"))
                 .setSmallIcon(R.drawable.dislike)
+                .setLargeIcon(BitmapFactory.decodeResource(appContext.getResources(), pickDailyNotificationIcon()))
+                .setContentTitle(getDailyNotificationTitle())
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(getDailyNotificationBody()))
                 .setAutoCancel(true);
 
         android.app.NotificationManager notificationManager =
@@ -89,43 +180,27 @@ public class FeedbackNotificationsGenerator {
         return (daysSinceFirstDay % 7) == 0;
     }
 
-
-    public boolean isThisWeekDeservePositiveFeedback() {
-
-        if (isThisTheFirstWeek()) {
-
-            return assessor.isThisWeekTrendNegative();
-
-        } else {
-
-            return assessor.isThisWeekTrendBetterThanLastWeekTrend();
-        }
-    }
-
-    private boolean isThisTheFirstWeek(){
-
-        DateGenerator firstWeekDay = new DateGenerator(-7);
-        DateGenerator firstRunDate = new DateGenerator(appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, firstWeekDay.getDate()));
-
-        return firstWeekDay.equals(firstRunDate);
-    }
-
     public void generateNotificationForDailyUser(){
 
         //user that subscribed to daily notification will receive a weekly update at the end of every week
         if(isTodayAWeekFinished()){
 
-            weeklyNotification(isThisWeekDeservePositiveFeedback());
+            generalFeedback = assessor.isThisRangeOfDatesShowsImprovment(firstRunDate, new DateGenerator());
+            weeklyFeedback = assessor.isThisRangeOfDatesShowsImprovment(new DateGenerator(-7), new DateGenerator(-1));
+
+            weeklyNotification();
 
         } else {
 
-            dailyNotification(assessor.isThisDayBetterThanLastDay());
+            dailyFeedback = assessor.isThisDayBetterThanLastDay();
+
+            dailyNotification();
         }
     }
 
     public void generateNotificationForWeeklyUser(){
 
-        weeklyNotification(isThisWeekDeservePositiveFeedback());
+        weeklyNotification();
     }
 
 }

@@ -36,14 +36,13 @@ public class NotificationsAlarmSetter {
         //set the daily details
         dailyHour = Calendar.getInstance();
         dailyHour.set(Calendar.HOUR_OF_DAY, 20);
+        //dailyHour.set(Calendar.MINUTE, 40);
 
         notificationAlarm = (AlarmManager)mainScreenContext.getSystemService(ALARM_SERVICE);
 
         Intent notificationIntent = new Intent(mainScreenContext, NotificationsReceiver.class);
         pendingNotificationIntent = PendingIntent.getBroadcast(mainScreenContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //setting default on daily
-        setNotificationsAlarm(AlarmManager.INTERVAL_DAY);
     }
 
     private void setFlagOfNotificationsInterval(long interval){
