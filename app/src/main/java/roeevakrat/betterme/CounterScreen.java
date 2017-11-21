@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -230,7 +231,11 @@ public class CounterScreen extends AppCompatActivity {
 
     private void hideYesterdayButtonIfFirstDay(){
 
-        if(firstRunDate.equals(new DateGenerator())){
+        DateGenerator todaysDate = new DateGenerator();
+
+        Log.e("bettermelog", "firstDate: " + firstRunDate.getDate() + "; today: " + todaysDate.getDate());
+
+        if(firstRunDate.equals(todaysDate)){
 
             yesterdayButton.setVisibility(View.INVISIBLE);
 
@@ -536,6 +541,7 @@ public class CounterScreen extends AppCompatActivity {
         super.onResume();
 
         hideYesterdayButtonIfFirstDay();
+        hideTomorrowsButtonIfCurrentDate();
 
         clickCounterIfAppCalledByWidget();
 

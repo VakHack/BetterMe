@@ -33,8 +33,8 @@ public class CloudSyncScreen extends AppCompatActivity {
     private String userPassword;
     private String userUsername;
 
-    //server auth
-    private FirebaseAuth serverAuth;
+    //server
+    private ServerHandler server;
 
     //database
     private SharedPreferences appMap;
@@ -46,45 +46,8 @@ public class CloudSyncScreen extends AppCompatActivity {
         appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
         appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
         appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
+        appMapEditor.putString(KeysDB.getInstance().SERVER_USER_ID, server.getServerUID());
         appMapEditor.apply();
-    }
-
-    void tryRegister(){
-
-        serverAuth.createUserWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if(task.isSuccessful()) {
-
-                    loginFeedbackView.setText("Registered successfully");
-                    addUserDataToSharedprefs();
-
-                } else {
-
-                    loginFeedbackView.setText(task.getException().getMessage());
-                }
-            }
-        });
-    }
-
-    void tryLogin(){
-
-        serverAuth.signInWithEmailAndPassword(userUsername, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if(task.isSuccessful()) {
-
-                    loginFeedbackView.setText("Logged-in successfully");
-                    addUserDataToSharedprefs();
-
-                } else {
-
-                    loginFeedbackView.setText(task.getException().getMessage());
-                }
-            }
-        });
     }
 
     @Override
@@ -111,7 +74,7 @@ public class CloudSyncScreen extends AppCompatActivity {
         appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //initialize auth object
-        serverAuth = FirebaseAuth.getInstance();
+        server = new FirebaseServerHandler(this);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +83,10 @@ public class CloudSyncScreen extends AppCompatActivity {
                 userUsername = username.getText().toString();
                 userPassword = password.getText().toString();
 
-                tryRegister();
+                server.tryRegister(userUsername, userPassword);
+
+                loginFeedbackView.setText(server.getFeedback());
+
             }
         });
 
@@ -131,7 +97,12 @@ public class CloudSyncScreen extends AppCompatActivity {
                 userUsername = username.getText().toString();
                 userPassword = password.getText().toString();
 
-                tryLogin();
+                if(server.tryLogin(userUsername, userPassword)){
+
+                    addUserDataToSharedprefs();
+                }
+
+                loginFeedbackView.setText(server.getFeedback());
             }
         });
 
