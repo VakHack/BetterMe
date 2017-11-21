@@ -46,7 +46,6 @@ public class CloudSyncScreen extends AppCompatActivity {
         appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
         appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
         appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
-        appMapEditor.putString(KeysDB.getInstance().SERVER_USER_ID, server.getServerUID());
         appMapEditor.apply();
     }
 

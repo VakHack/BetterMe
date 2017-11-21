@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+
 public class CounterScreen extends AppCompatActivity {
 
     //counter title
@@ -69,15 +71,16 @@ public class CounterScreen extends AppCompatActivity {
     //database
     private SharedPreferences appMap;
     private SharedPreferences.Editor appMapEditor;
+    private ServerHandler server;
 
     private DateGenerator countersDate;
+    private DateGenerator firstRunDate;
 
     private SoundEffectPlayer screenEffect;
     private SoundEffectPlayer buttonEffect;
 
-    NotificationsAlarmSetter alarmSetter;
+    private NotificationsAlarmSetter alarmSetter;
 
-    DateGenerator firstRunDate;
 
     private void setTodaysCounter(int val){
 
@@ -263,6 +266,31 @@ public class CounterScreen extends AppCompatActivity {
         aboutDialog.show();
     }
 
+    private void downloadDataIfLoggedIn(){
+
+        if(appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false)){
+
+            if(server.tryLogin(KeysDB.getInstance().USERNAME, KeysDB.getInstance().USER_PASSWORD)){
+
+                HashMap<String, Integer> badHabitsMap = server.tryRetrieveData().getBadHabitsMap();
+                MapToSharedprefConvertor.convertMapToSharedpref(badHabitsMap, appMap);
+            }
+        }
+    }
+
+    private void uploadDataIfLoggedIn(){
+
+        HashMap<String, Integer> badHabitMap = MapToSharedprefConvertor.convertSharedprefsToMap(appMap);
+
+        if(appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false)){
+
+            if(server.tryLogin(KeysDB.getInstance().USERNAME, KeysDB.getInstance().USER_PASSWORD)){
+
+                server.tryUploadData(new UserData(badHabitMap));
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -346,6 +374,11 @@ public class CounterScreen extends AppCompatActivity {
 
         screenEffect.play();
 
+        //dealing with server side saved data
+        server = new FirebaseServerHandler(this);
+        downloadDataIfLoggedIn();
+
+        //in case called by home-screen widget
         clickCounterIfAppCalledByWidget();
 
         refreshCurrentDate();
@@ -559,5 +592,12 @@ public class CounterScreen extends AppCompatActivity {
 
             createWidgetInstallNotification();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        uploadDataIfLoggedIn();
     }
 }

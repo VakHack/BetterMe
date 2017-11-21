@@ -22,5 +22,4 @@ public class KeysDB {
     public final String NOTIFICATIONS_INTERVAL_CATEGORY = "notificationsInterval";
 
     public String PACKAGE_NAME;
-    public String SERVER_USER_ID;
 }

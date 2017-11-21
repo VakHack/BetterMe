@@ -4,10 +4,16 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.concurrent.Executor;
 
@@ -19,7 +25,8 @@ public class FirebaseServerHandler extends ServerHandler {
 
     private FirebaseAuth serverAuth;
     private boolean isSucceeded;
-    FirebaseStorage storage;
+    private FirebaseStorage storage;
+    private byte[] downloadedData;
 
     public FirebaseServerHandler(Context context) {
         super(context);
@@ -76,17 +83,57 @@ public class FirebaseServerHandler extends ServerHandler {
     }
 
     @Override
-    public boolean tryUploadData(BetterMeUserData data) {
-        return false;
+    public boolean tryUploadData(UserData data) {
+
+        byte[] serializedData = SerializationUtils.serialize(data);
+
+        UploadTask uploadTask = storage.getReference(getServerUID()).putBytes(serializedData);
+
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        isSucceeded = true;
+                        feedback = "data uploaded successfully";
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        isSucceeded = false;
+                        feedback = e.getMessage();
+                    }
+                });
+
+        return isSucceeded;
     }
 
     @Override
-    public BetterMeUserData tryRetrieveData() {
-        return null;
+    public UserData tryRetrieveData() {
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        StorageReference storageReference = storage.getReference(getServerUID());
+
+
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+
+                downloadedData = bytes;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+                downloadedData = null;
+            }
+        });
+
+        return SerializationUtils.deserialize(downloadedData);
     }
 
-    @Override
-    public String getServerUID() {
+    private String getServerUID() {
         return serverAuth.getCurrentUser().getUid();
     }
 }

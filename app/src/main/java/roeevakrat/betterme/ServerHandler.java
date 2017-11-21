@@ -19,9 +19,8 @@ public abstract class ServerHandler {
     public abstract boolean tryRegister(String username, String password);
     public abstract boolean tryLogin(String username, String password);
 
-    public abstract boolean tryUploadData(BetterMeUserData data);
-    public abstract BetterMeUserData tryRetrieveData();
-    public abstract String getServerUID();
+    public abstract boolean tryUploadData(UserData data);
+    public abstract UserData tryRetrieveData();
 
     public String getFeedback(){
         return feedback;
