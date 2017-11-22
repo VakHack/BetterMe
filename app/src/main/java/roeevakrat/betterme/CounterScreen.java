@@ -593,7 +593,10 @@ public class CounterScreen extends AppCompatActivity {
                 } else if(tryLogin()){
 
                     String feedback = downloadData();
+
                     refreshCounter();
+                    hideYesterdayButtonIfFirstDay();
+                    hideTomorrowsButtonIfCurrentDate();
 
                     toastMsg = feedback;
 
@@ -603,7 +606,6 @@ public class CounterScreen extends AppCompatActivity {
             }
 
         });
-
     }
 
     @Override
@@ -638,5 +640,14 @@ public class CounterScreen extends AppCompatActivity {
         if(isLoginDetailsAvailable() && tryLogin()){
             uploadData();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        //return always to the same page
+        Intent counterScreenIntent = new Intent(CounterScreen.this, CounterScreen.class);
+        startActivity(counterScreenIntent);
     }
 }

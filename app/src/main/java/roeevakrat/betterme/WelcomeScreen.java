@@ -79,7 +79,6 @@ public class WelcomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 goToCounterActivity();
-
                 finish();
             }
         });
