@@ -34,8 +34,6 @@ public class RegressionTrendLineCalculator extends FragmentActivity {
 
         for(int i = 0; i <= numOfDaysInRange; ++i) {
 
-            Log.e("bettermelog", "regression days in range:" + from.getDate());
-
             regression.addData(i, countersMap.getInt(from.getDate(), 0));
             from.addDaysToDate(1);
         }

@@ -9,19 +9,21 @@ import java.util.HashMap;
 
 public class UserData implements Serializable {
 
-    public HashMap<String, Integer> badHabitsMap;
+    private static final long serialVersionUID = 6529685098267757690L;
+    private HashMap<String, Integer> badHabitsMap;
+    private String firstRunDate;
 
-    public UserData(){
-
-        badHabitsMap = new HashMap<>();
-    }
-
-    public UserData(HashMap<String, Integer> badHabitsMap){
+    public UserData(HashMap<String, Integer> badHabitsMap, String firstRunDate){
 
         this.badHabitsMap = badHabitsMap;
+        this.firstRunDate = firstRunDate;
     }
 
     public HashMap<String, Integer> getBadHabitsMap() {
         return badHabitsMap;
+    }
+
+    public String getFirstRunDate() {
+        return firstRunDate;
     }
 }

@@ -189,33 +189,43 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="6dp"
                 app:srcCompat="@drawable/ic_menu_black_24dp"/>
 
             <TextView
-                android:id="@+id/cloudSync"
+                android:id="@+id/login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/blackMenuButton"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:text="Sync with cloud"
+                android:text="Login cloud"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                android:visibility="invisible"/>
+                />
+
+            <TextView
+                android:id="@+id/syncWithCloud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/login"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Sync with cloud"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/setNotifications"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/cloudSync"
+                android:layout_below="@+id/syncWithCloud"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
-                android:layout_weight="1"
                 android:text="Set notifications frequency"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"/>
@@ -224,7 +234,7 @@
                 android:id="@+id/notificationsSpinner"
                 android:layout_width="190dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/cloudSync"
+                android:layout_below="@+id/setNotifications"
                 android:layout_centerHorizontal="false"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="5dp"
@@ -237,10 +247,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/notificationsSpinner"
+                android:layout_below="@+id/setNotifications"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
-                android:layout_weight="0"
                 android:text="Edit today's counter"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"/>
@@ -271,11 +280,11 @@
                 android:id="@+id/about"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginBottom="25dp"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
                 android:text="About the developer"
+                android:layout_below="@+id/editCounterLine"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:visibility="visible"/>

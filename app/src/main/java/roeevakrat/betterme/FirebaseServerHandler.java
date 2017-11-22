@@ -15,8 +15,6 @@ import com.google.firebase.storage.UploadTask;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.util.concurrent.Executor;
-
 /**
  * Created by Administrator on 21/11/2017.
  */
@@ -26,7 +24,7 @@ public class FirebaseServerHandler extends ServerHandler {
     private FirebaseAuth serverAuth;
     private boolean isSucceeded;
     private FirebaseStorage storage;
-    private byte[] downloadedData;
+    private UserData retrievedData;
 
     public FirebaseServerHandler(Context context) {
         super(context);
@@ -38,20 +36,19 @@ public class FirebaseServerHandler extends ServerHandler {
     @Override
     public boolean tryRegister(String username, String password) {
 
-        serverAuth.createUserWithEmailAndPassword(username, password).addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-
+        serverAuth.createUserWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if(task.isSuccessful()) {
 
                     isSucceeded = true;
-                    feedback = "Register Successfully";
+                    logFeedback = "Register Successfully";
 
                 } else {
 
                     isSucceeded = false;
-                    feedback = task.getException().getMessage();
+                    logFeedback = task.getException().getMessage();
                 }
             }
         });
@@ -62,19 +59,19 @@ public class FirebaseServerHandler extends ServerHandler {
     @Override
     public boolean tryLogin(String username, String password) {
 
-        serverAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+        serverAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if(task.isSuccessful()) {
 
                     isSucceeded = true;
-                    feedback = "Logged in Successfully";
+                    logFeedback = "Logged in Successfully";
 
                 } else {
 
                     isSucceeded = false;
-                    feedback = task.getException().getMessage();
+                    logFeedback = task.getException().getMessage();
                 }
             }
         });
@@ -87,14 +84,14 @@ public class FirebaseServerHandler extends ServerHandler {
 
         byte[] serializedData = SerializationUtils.serialize(data);
 
-        UploadTask uploadTask = storage.getReference(getServerUID()).putBytes(serializedData);
+        UploadTask uploadTask = storage.getReference().child("uploads/" + getServerUID()).putBytes(serializedData);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                         isSucceeded = true;
-                        feedback = "data uploaded successfully";
+                        storageFeedback = "Data uploaded successfully";
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -102,7 +99,7 @@ public class FirebaseServerHandler extends ServerHandler {
                     public void onFailure(@NonNull Exception e) {
 
                         isSucceeded = false;
-                        feedback = e.getMessage();
+                        storageFeedback = e.getMessage();
                     }
                 });
 
@@ -113,24 +110,26 @@ public class FirebaseServerHandler extends ServerHandler {
     public UserData tryRetrieveData() {
 
         final long ONE_MEGABYTE = 1024 * 1024;
-        StorageReference storageReference = storage.getReference(getServerUID());
-
+        StorageReference storageReference = storage.getReference().child("uploads/" + getServerUID());
 
         storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
 
-                downloadedData = bytes;
+                retrievedData = SerializationUtils.deserialize(bytes);
+                storageFeedback = "Data downloaded successfully";
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
 
-                downloadedData = null;
+                retrievedData = null;
+                storageFeedback = exception.getMessage();
             }
         });
 
-        return SerializationUtils.deserialize(downloadedData);
+        return retrievedData;
     }
 
     private String getServerUID() {

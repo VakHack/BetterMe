@@ -3,7 +3,6 @@ package roeevakrat.betterme;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,12 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-
-public class CloudSyncScreen extends AppCompatActivity {
+public class LoginScreen extends AppCompatActivity {
 
     private TextView title;
     private TextView body;
@@ -46,6 +40,7 @@ public class CloudSyncScreen extends AppCompatActivity {
         appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
         appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
         appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
+
         appMapEditor.apply();
     }
 
@@ -84,7 +79,7 @@ public class CloudSyncScreen extends AppCompatActivity {
 
                 server.tryRegister(userUsername, userPassword);
 
-                loginFeedbackView.setText(server.getFeedback());
+                loginFeedbackView.setText(server.getLogFeedback());
 
             }
         });
@@ -101,7 +96,7 @@ public class CloudSyncScreen extends AppCompatActivity {
                     addUserDataToSharedprefs();
                 }
 
-                loginFeedbackView.setText(server.getFeedback());
+                loginFeedbackView.setText(server.getLogFeedback());
             }
         });
 
@@ -109,7 +104,7 @@ public class CloudSyncScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent counterScreenIntent = new Intent(CloudSyncScreen.this, CounterScreen.class);
+                Intent counterScreenIntent = new Intent(LoginScreen.this, CounterScreen.class);
                 startActivity(counterScreenIntent);
 
             }

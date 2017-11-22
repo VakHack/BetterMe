@@ -9,11 +9,14 @@ import android.content.Context;
 public abstract class ServerHandler {
 
     protected Context context;
-    protected String feedback;
+    protected String logFeedback;
+    protected String storageFeedback;
+
 
     public ServerHandler(Context context){
         this.context = context;
-        this.feedback = "No login/register attempted";
+        this.logFeedback = "No login/register attempted";
+        this.storageFeedback = "No download/upload actions attempted";
     }
 
     public abstract boolean tryRegister(String username, String password);
@@ -22,7 +25,11 @@ public abstract class ServerHandler {
     public abstract boolean tryUploadData(UserData data);
     public abstract UserData tryRetrieveData();
 
-    public String getFeedback(){
-        return feedback;
+    public String getLogFeedback() {
+        return logFeedback;
+    }
+
+    public String getStorageFeedback() {
+        return storageFeedback;
     }
 }

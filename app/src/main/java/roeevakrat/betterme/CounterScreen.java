@@ -11,7 +11,6 @@ import android.graphics.Typeface;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -51,7 +50,8 @@ public class CounterScreen extends AppCompatActivity {
     private EditText editCounterLine;
     private TextView editCounterButton;
     private ImageView enterEdit;
-    private TextView syncScreenButton;
+    private TextView loginScreen;
+    private TextView syncButton;
     private boolean isEditCounterLineOn;
     private Spinner notificationsSpinner;
     private TextView notificationsSetter;
@@ -80,7 +80,6 @@ public class CounterScreen extends AppCompatActivity {
     private SoundEffectPlayer buttonEffect;
 
     private NotificationsAlarmSetter alarmSetter;
-
 
     private void setTodaysCounter(int val){
 
@@ -236,8 +235,6 @@ public class CounterScreen extends AppCompatActivity {
 
         DateGenerator todaysDate = new DateGenerator();
 
-        Log.e("bettermelog", "firstDate: " + firstRunDate.getDate() + "; today: " + todaysDate.getDate());
-
         if(firstRunDate.equals(todaysDate)){
 
             yesterdayButton.setVisibility(View.INVISIBLE);
@@ -266,29 +263,42 @@ public class CounterScreen extends AppCompatActivity {
         aboutDialog.show();
     }
 
-    private void downloadDataIfLoggedIn(){
+    private boolean isLoginDetailsAvailable(){
 
-        if(appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false)){
-
-            if(server.tryLogin(KeysDB.getInstance().USERNAME, KeysDB.getInstance().USER_PASSWORD)){
-
-                HashMap<String, Integer> badHabitsMap = server.tryRetrieveData().getBadHabitsMap();
-                MapToSharedprefConvertor.convertMapToSharedpref(badHabitsMap, appMap);
-            }
-        }
+        return appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false);
     }
 
-    private void uploadDataIfLoggedIn(){
+    private boolean tryLogin(){
+
+        String username = appMap.getString(KeysDB.getInstance().USERNAME, "username");
+        String password = appMap.getString(KeysDB.getInstance().USER_PASSWORD, "password");
+
+        return server.tryLogin(username, password);
+    }
+
+    private String downloadData() {
+
+        UserData data = server.tryRetrieveData();
+
+        if (data != null) {
+
+            HashMap<String, Integer> badHabitsMap = data.getBadHabitsMap();
+            MapToSharedprefConvertor.convertMapToSharedpref(badHabitsMap, appMap);
+
+            appMapEditor = appMap.edit();
+            appMapEditor.putString(KeysDB.getInstance().FIRST_RUN_DATE, data.getFirstRunDate());
+            appMapEditor.apply();
+        }
+
+        return server.getStorageFeedback();
+    }
+
+    private String uploadData(){
 
         HashMap<String, Integer> badHabitMap = MapToSharedprefConvertor.convertSharedprefsToMap(appMap);
+        server.tryUploadData(new UserData(badHabitMap, firstRunDate.getDate()));
 
-        if(appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false)){
-
-            if(server.tryLogin(KeysDB.getInstance().USERNAME, KeysDB.getInstance().USER_PASSWORD)){
-
-                server.tryUploadData(new UserData(badHabitMap));
-            }
-        }
+        return server.getStorageFeedback();
     }
 
     @Override
@@ -324,10 +334,11 @@ public class CounterScreen extends AppCompatActivity {
         editCounterLine = (EditText)findViewById(R.id.editCounterLine);
         editCounterButton = (TextView)findViewById(R.id.editCounterButton);
         enterEdit = (ImageView)findViewById(R.id.enterEdit);
-        syncScreenButton = (TextView)findViewById(R.id.cloudSync);
+        loginScreen = (TextView)findViewById(R.id.login);
         notificationsSpinner = (Spinner)findViewById(R.id.notificationsSpinner);
         notificationsSetter = (TextView)findViewById(R.id.setNotifications);
         aboutMeButton = (TextView)findViewById(R.id.about);
+        syncButton = (TextView)findViewById(R.id.syncWithCloud);
 
         //initialize help screen views
         overlay = (TextView)findViewById(R.id.overlay);
@@ -376,7 +387,9 @@ public class CounterScreen extends AppCompatActivity {
 
         //dealing with server side saved data
         server = new FirebaseServerHandler(this);
-        downloadDataIfLoggedIn();
+        if(isLoginDetailsAvailable()){
+            downloadData();
+        }
 
         //in case called by home-screen widget
         clickCounterIfAppCalledByWidget();
@@ -514,11 +527,11 @@ public class CounterScreen extends AppCompatActivity {
             }
         });
 
-        syncScreenButton.setOnClickListener(new View.OnClickListener() {
+        loginScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent syncScreenIntent = new Intent(CounterScreen.this, CloudSyncScreen.class);
+                Intent syncScreenIntent = new Intent(CounterScreen.this, LoginScreen.class);
                 startActivity(syncScreenIntent);
             }
         });
@@ -567,6 +580,30 @@ public class CounterScreen extends AppCompatActivity {
             }
         });
 
+        syncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String toastMsg;
+
+                if(!isLoginDetailsAvailable()){
+
+                    toastMsg = "Have to be logged-in first";
+
+                } else if(tryLogin()){
+
+                    String feedback = downloadData();
+                    refreshCounter();
+
+                    toastMsg = feedback;
+
+                } else toastMsg = "Failed to login";
+
+                Toast.makeText(CounterScreen.this, toastMsg, Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
     }
 
     @Override
@@ -598,6 +635,8 @@ public class CounterScreen extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        uploadDataIfLoggedIn();
+        if(isLoginDetailsAvailable() && tryLogin()){
+            uploadData();
+        }
     }
 }

@@ -3,6 +3,8 @@ package roeevakrat.betterme;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,14 +16,14 @@ public class MapToSharedprefConvertor {
 
     static void convertMapToSharedpref(HashMap<String, Integer> dataMap, SharedPreferences sp){
 
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor;
 
         for(String key: dataMap.keySet()){
 
+            editor = sp.edit();
             editor.putInt(key, dataMap.get(key));
+            editor.apply();
         }
-
-        editor.apply();
     }
 
     static HashMap<String, Integer> convertSharedprefsToMap(SharedPreferences sp){
@@ -32,7 +34,13 @@ public class MapToSharedprefConvertor {
 
         for (Map.Entry<String, ?> entry : entries.entrySet()) {
 
-            map.put(entry.getKey(), sp.getInt(entry.getKey(), 0));
+            String key = entry.getKey();
+
+            //some of the keys leading to saved non-integer values. we ignore them here
+            if(entries.get(key) instanceof Integer){
+
+                map.put(key, sp.getInt(key, 0));
+            }
         }
 
         return map;
