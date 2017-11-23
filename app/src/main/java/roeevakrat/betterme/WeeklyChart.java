@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -155,7 +154,7 @@ public class WeeklyChart extends AppCompatActivity {
         mainPlot.setLineWidth(2.5f);
         mainPlot.setValueTextSize(20);
         mainPlot.setValueTextColor(Color.rgb(255, 241, 168));
-        Typeface tf = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont());
+        Typeface tf = Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getBodyFont());
         mainPlot.setValueTypeface(tf);
         mainPlot.setValueFormatter(new WeeklyChartDataFormatter());
         mainPlot.setColor(Color.WHITE);
@@ -318,11 +317,11 @@ public class WeeklyChart extends AppCompatActivity {
         arrowWeekArrow = (ImageView)findViewById(R.id.weekArrowArrow);
 
         //set fonts
-        setTextFont(counterTitle, titleFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(dateTitle, dateFont, AppFontsDB.getInstance().getBodyFont());
-        trendButton.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        setTextFont(counterTitle, titleFont, FontsDB.getInstance().getTitleFont());
+        setTextFont(dateTitle, dateFont, FontsDB.getInstance().getBodyFont());
+        trendButton.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
 
-        helpTextFont = Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont());
+        helpTextFont = Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getHelpScreenFont());
         helpTextTrendButton.setTypeface(helpTextFont);
         helpTextWeekArrow.setTypeface(helpTextFont);
 

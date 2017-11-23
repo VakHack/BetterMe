@@ -40,8 +40,8 @@
 
     <ImageView
         android:id="@+id/weeklyChartHelpButton"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="false"

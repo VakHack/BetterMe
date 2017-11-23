@@ -60,9 +60,9 @@ public class LoginScreen extends AppCompatActivity {
         backButton = (ImageView)findViewById(R.id.syncScreenBackButton);
 
         //set fonts
-        title.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
-        body.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
-        loginFeedbackView.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
+        title.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        body.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getBodyFont()));
+        loginFeedbackView.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getBodyFont()));
 
         //initialize shared preferences
         appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
@@ -80,7 +80,6 @@ public class LoginScreen extends AppCompatActivity {
                 server.tryRegister(userUsername, userPassword);
 
                 loginFeedbackView.setText(server.getLogFeedback());
-
             }
         });
 
@@ -96,6 +95,7 @@ public class LoginScreen extends AppCompatActivity {
                     addUserDataToSharedprefs();
                 }
 
+                while(server.getLogFeedback() == null);
                 loginFeedbackView.setText(server.getLogFeedback());
             }
         });

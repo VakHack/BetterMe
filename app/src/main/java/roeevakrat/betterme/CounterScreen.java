@@ -373,15 +373,15 @@ public class CounterScreen extends AppCompatActivity {
         }
 
         //update texts fonts
-        counterTitleTop.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
-        counterTitleMid.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
-        counterTitleBottom.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
-        dateTitle.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getBodyFont()));
-        counterView.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
-        counterButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
-        counterViewHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
-        yesterdayButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
-        chartHelpText.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getHelpScreenFont()));
+        counterTitleTop.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        counterTitleMid.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        counterTitleBottom.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        dateTitle.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        counterView.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
+        counterButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getHelpScreenFont()));
+        counterViewHelpText.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getHelpScreenFont()));
+        yesterdayButtonHelpText.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getHelpScreenFont()));
+        chartHelpText.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getHelpScreenFont()));
 
         screenEffect.play();
 
@@ -590,7 +590,9 @@ public class CounterScreen extends AppCompatActivity {
 
                     toastMsg = "Have to be logged-in first";
 
-                } else if(tryLogin()){
+                } else {
+
+                    tryLogin();
 
                     String feedback = downloadData();
 
@@ -599,8 +601,7 @@ public class CounterScreen extends AppCompatActivity {
                     hideTomorrowsButtonIfCurrentDate();
 
                     toastMsg = feedback;
-
-                } else toastMsg = "Failed to login";
+                }
 
                 Toast.makeText(CounterScreen.this, toastMsg, Toast.LENGTH_SHORT).show();
             }

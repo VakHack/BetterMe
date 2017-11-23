@@ -15,8 +15,7 @@ public abstract class ServerHandler {
 
     public ServerHandler(Context context){
         this.context = context;
-        this.logFeedback = "No login/register attempted";
-        this.storageFeedback = "No download/upload actions attempted";
+        this.logFeedback = this.storageFeedback ="Please try again";
     }
 
     public abstract boolean tryRegister(String username, String password);

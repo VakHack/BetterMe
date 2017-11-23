@@ -69,11 +69,11 @@ public class WelcomeScreen extends AppCompatActivity {
         bodyText = (TextView)findViewById(R.id.introduction);
         startButton = (Button)findViewById(R.id.button);
 
-        setTextFont(titleText, titleFont, AppFontsDB.getInstance().getTitleFont());
-        setTextFont(bodyText, bodyFont, AppFontsDB.getInstance().getBodyFont());
-        setTextFont(startButton, buttonFont, AppFontsDB.getInstance().getBodyFont());
+        setTextFont(titleText, titleFont, FontsDB.getInstance().getTitleFont());
+        setTextFont(bodyText, bodyFont, FontsDB.getInstance().getBodyFont());
+        setTextFont(startButton, buttonFont, FontsDB.getInstance().getBodyFont());
 
-        startButton.setTypeface(Typeface.createFromAsset(getAssets(), AppFontsDB.getInstance().getTitleFont()));
+        startButton.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getTitleFont()));
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
