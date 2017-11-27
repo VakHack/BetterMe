@@ -268,14 +268,6 @@ public class CounterScreen extends AppCompatActivity {
         return appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false);
     }
 
-//    private boolean tryLogin(){
-//
-//        String username = appMap.getString(KeysDB.getInstance().USERNAME, "username");
-//        String password = appMap.getString(KeysDB.getInstance().USER_PASSWORD, "password");
-//
-//        return server.tryLogin(username, password);
-//    }
-
     private String downloadData() {
 
         UserData data = server.tryRetrieveData();
