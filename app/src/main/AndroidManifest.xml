@@ -56,7 +56,7 @@
         </receiver>
 
         <service
-            android:name=".DataUpdater"
+            android:name=".DataUploader"
             android:exported="false">
         </service>
     </application>

@@ -634,7 +634,7 @@ public class CounterScreen extends AppCompatActivity {
         }
 
         if(isLoginDetailsAvailable()){
-            Intent uploader = new Intent(CounterScreen.this, DataUpdater.class);
+            Intent uploader = new Intent(CounterScreen.this, DataUploader.class);
             this.startService(uploader);
         }
     }
