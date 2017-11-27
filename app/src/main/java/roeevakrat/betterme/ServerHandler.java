@@ -12,7 +12,6 @@ public abstract class ServerHandler {
     protected String logFeedback;
     protected String storageFeedback;
 
-
     public ServerHandler(Context context){
         this.context = context;
         this.logFeedback = this.storageFeedback ="Please try again";

@@ -268,13 +268,13 @@ public class CounterScreen extends AppCompatActivity {
         return appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false);
     }
 
-    private boolean tryLogin(){
-
-        String username = appMap.getString(KeysDB.getInstance().USERNAME, "username");
-        String password = appMap.getString(KeysDB.getInstance().USER_PASSWORD, "password");
-
-        return server.tryLogin(username, password);
-    }
+//    private boolean tryLogin(){
+//
+//        String username = appMap.getString(KeysDB.getInstance().USERNAME, "username");
+//        String password = appMap.getString(KeysDB.getInstance().USER_PASSWORD, "password");
+//
+//        return server.tryLogin(username, password);
+//    }
 
     private String downloadData() {
 
@@ -283,7 +283,7 @@ public class CounterScreen extends AppCompatActivity {
         if (data != null) {
 
             HashMap<String, Integer> badHabitsMap = data.getBadHabitsMap();
-            MapToSharedprefConvertor.convertMapToSharedpref(badHabitsMap, appMap);
+            MapToSharedprefConvertor.mapToSharedpref(badHabitsMap, appMap);
 
             appMapEditor = appMap.edit();
             appMapEditor.putString(KeysDB.getInstance().FIRST_RUN_DATE, data.getFirstRunDate());
@@ -295,7 +295,7 @@ public class CounterScreen extends AppCompatActivity {
 
     private String uploadData(){
 
-        HashMap<String, Integer> badHabitMap = MapToSharedprefConvertor.convertSharedprefsToMap(appMap);
+        HashMap<String, Integer> badHabitMap = MapToSharedprefConvertor.sharedprefsToMap(appMap);
         server.tryUploadData(new UserData(badHabitMap, firstRunDate.getDate()));
 
         return server.getStorageFeedback();
@@ -592,7 +592,7 @@ public class CounterScreen extends AppCompatActivity {
 
                 } else {
 
-                    tryLogin();
+                    //tryLogin();
 
                     String feedback = downloadData();
 
@@ -623,8 +623,8 @@ public class CounterScreen extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
         if(isFirstRunOfCounterScreen()){
 
@@ -632,14 +632,10 @@ public class CounterScreen extends AppCompatActivity {
 
             createWidgetInstallNotification();
         }
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if(isLoginDetailsAvailable() && tryLogin()){
-            uploadData();
+        if(isLoginDetailsAvailable()){
+            Intent uploader = new Intent(CounterScreen.this, DataUpdater.class);
+            this.startService(uploader);
         }
     }
 

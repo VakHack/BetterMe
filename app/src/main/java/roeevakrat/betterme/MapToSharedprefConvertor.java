@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class MapToSharedprefConvertor {
 
-    static void convertMapToSharedpref(HashMap<String, Integer> dataMap, SharedPreferences sp){
+    static void mapToSharedpref(HashMap<String, Integer> dataMap, SharedPreferences sp){
 
         SharedPreferences.Editor editor;
 
@@ -26,7 +26,7 @@ public class MapToSharedprefConvertor {
         }
     }
 
-    static HashMap<String, Integer> convertSharedprefsToMap(SharedPreferences sp){
+    static HashMap<String, Integer> sharedprefsToMap(SharedPreferences sp){
 
         HashMap<String, Integer> map = new HashMap<>();
 

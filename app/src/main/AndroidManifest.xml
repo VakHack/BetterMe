@@ -54,6 +54,11 @@
             android:enabled="true"
             android:exported="true">
         </receiver>
+
+        <service
+            android:name=".DataUpdater"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

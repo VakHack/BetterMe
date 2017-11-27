@@ -2,6 +2,7 @@ package roeevakrat.betterme;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -92,6 +93,8 @@ public class FirebaseServerHandler extends ServerHandler {
 
                         isSucceeded = true;
                         storageFeedback = "Data uploaded successfully";
+
+                        Log.i("bettermelog", "success");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
