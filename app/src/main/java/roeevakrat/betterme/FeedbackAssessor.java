@@ -20,14 +20,14 @@ public class FeedbackAssessor extends FragmentActivity {
 
     FeedbackAssessor(Context context){
 
-        appMap = context.getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = context.getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
     }
 
-    private Double rangeOfDaysLinearRegressionSlope(DateGenerator fromDate, DateGenerator toDate){
+    private Double rangeOfDaysLinearRegressionSlope(DateFormatter fromDate, DateFormatter toDate){
 
         SimpleRegression weeklyRegression = new SimpleRegression();
 
-        DateGenerator weekDatesIterator = new DateGenerator(fromDate);
+        DateFormatter weekDatesIterator = new DateFormatter(fromDate);
 
         int range = fromDate.calculateIntervalBetweenDates(toDate);
 
@@ -40,15 +40,15 @@ public class FeedbackAssessor extends FragmentActivity {
         return weeklyRegression.getSlope();
     }
 
-    public boolean isThisRangeOfDatesShowsImprovment(DateGenerator fromDate, DateGenerator toDate){
+    public boolean isThisRangeOfDatesShowsImprovment(DateFormatter fromDate, DateFormatter toDate){
 
         return rangeOfDaysLinearRegressionSlope(fromDate, toDate) < 0;
     }
 
     public DailyFeedback isThisDayBetterThanLastDay() {
 
-        DateGenerator today = new DateGenerator();
-        DateGenerator yesterday = new DateGenerator(-1);
+        DateFormatter today = new DateFormatter();
+        DateFormatter yesterday = new DateFormatter(-1);
 
         int todaysCounter = appMap.getInt(today.getDate(), 0);
         int yesterdaysCounter = appMap.getInt(yesterday.getDate(), 0);

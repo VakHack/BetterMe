@@ -73,8 +73,8 @@ public class CounterScreen extends AppCompatActivity {
     private SharedPreferences.Editor appMapEditor;
     private ServerHandler server;
 
-    private DateGenerator countersDate;
-    private DateGenerator firstRunDate;
+    private DateFormatter countersDate;
+    private DateFormatter firstRunDate;
 
     private SoundEffectPlayer screenEffect;
     private SoundEffectPlayer buttonEffect;
@@ -92,10 +92,10 @@ public class CounterScreen extends AppCompatActivity {
 
     private void getFirstRunDate(){
 
-        DateGenerator today = new DateGenerator();
-        String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, today.getDate());
+        DateFormatter today = new DateFormatter();
+        String firstRunDateStr = appMap.getString(SharedPreferenceDB.getInstance().FIRST_RUN_DATE, today.getDate());
 
-        firstRunDate = new DateGenerator(firstRunDateStr);
+        firstRunDate = new DateFormatter(firstRunDateStr);
     }
 
     private void refreshCounter(){
@@ -119,26 +119,26 @@ public class CounterScreen extends AppCompatActivity {
 
     private boolean isFirstRunOfCounterScreen(){
 
-        return appMap.getBoolean(KeysDB.getInstance().COUNTER_SCREEN_FIRST_RUN, true);
+        return appMap.getBoolean(SharedPreferenceDB.getInstance().COUNTER_SCREEN_FIRST_RUN, true);
     }
 
     private void setToNotFirstRunOfCounterScreen(){
 
         appMapEditor = appMap.edit();
-        appMapEditor.putBoolean(KeysDB.getInstance().COUNTER_SCREEN_FIRST_RUN, false);
+        appMapEditor.putBoolean(SharedPreferenceDB.getInstance().COUNTER_SCREEN_FIRST_RUN, false);
         appMapEditor.apply();
     }
 
     private void setRunByWidgetFlagToFalse(){
 
         appMapEditor = appMap.edit();
-        appMapEditor.putBoolean(KeysDB.getInstance().APP_OPENED_BY_WIDGET, false);
+        appMapEditor.putBoolean(SharedPreferenceDB.getInstance().APP_OPENED_BY_WIDGET, false);
         appMapEditor.apply();
     }
 
     private boolean isAppStartedByWidget(){
 
-        return appMap.getBoolean(KeysDB.getInstance().APP_OPENED_BY_WIDGET, false);
+        return appMap.getBoolean(SharedPreferenceDB.getInstance().APP_OPENED_BY_WIDGET, false);
     }
 
     private void clickCounterButtonAfterDelay(){
@@ -219,7 +219,7 @@ public class CounterScreen extends AppCompatActivity {
 
     private void hideTomorrowsButtonIfCurrentDate(){
 
-        DateGenerator todaysDate = new DateGenerator();
+        DateFormatter todaysDate = new DateFormatter();
 
         if(todaysDate.equals(countersDate)){
 
@@ -233,7 +233,7 @@ public class CounterScreen extends AppCompatActivity {
 
     private void hideYesterdayButtonIfFirstDay(){
 
-        DateGenerator todaysDate = new DateGenerator();
+        DateFormatter todaysDate = new DateFormatter();
 
         if(firstRunDate.equals(todaysDate)){
 
@@ -265,7 +265,7 @@ public class CounterScreen extends AppCompatActivity {
 
     private boolean isLoginDetailsAvailable(){
 
-        return appMap.getBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, false);
+        return appMap.getBoolean(SharedPreferenceDB.getInstance().LOGGED_IN_CLOUD, false);
     }
 
     private String downloadData() {
@@ -278,17 +278,9 @@ public class CounterScreen extends AppCompatActivity {
             MapToSharedprefConvertor.mapToSharedpref(badHabitsMap, appMap);
 
             appMapEditor = appMap.edit();
-            appMapEditor.putString(KeysDB.getInstance().FIRST_RUN_DATE, data.getFirstRunDate());
+            appMapEditor.putString(SharedPreferenceDB.getInstance().FIRST_RUN_DATE, data.getFirstRunDate());
             appMapEditor.apply();
         }
-
-        return server.getStorageFeedback();
-    }
-
-    private String uploadData(){
-
-        HashMap<String, Integer> badHabitMap = MapToSharedprefConvertor.sharedprefsToMap(appMap);
-        server.tryUploadData(new UserData(badHabitMap, firstRunDate.getDate()));
 
         return server.getStorageFeedback();
     }
@@ -299,13 +291,13 @@ public class CounterScreen extends AppCompatActivity {
         setContentView(R.layout.activity_counter_screen);
 
         //updating package name
-        KeysDB.getInstance().PACKAGE_NAME = getApplicationContext().getPackageName();
+        SharedPreferenceDB.getInstance().PACKAGE_NAME = getApplicationContext().getPackageName();
 
         //initialize date var
-        countersDate = new DateGenerator();
+        countersDate = new DateFormatter();
 
         //initialize shared preferences
-        appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //initialize texts and views
         counterButton = (ImageView)findViewById(R.id.counterButton);
@@ -546,7 +538,6 @@ public class CounterScreen extends AppCompatActivity {
                 } else {
 
                     alarmSetter.cancelNotificationsAlarm();
-
                 }
             }
 

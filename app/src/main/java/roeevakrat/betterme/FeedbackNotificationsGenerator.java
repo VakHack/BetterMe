@@ -18,7 +18,7 @@ public class FeedbackNotificationsGenerator {
     private Context appContext;
     private FeedbackAssessor assessor;
 
-    private DateGenerator firstRunDate;
+    private DateFormatter firstRunDate;
 
     //details about current individual feedback
     boolean weeklyFeedback;
@@ -30,17 +30,17 @@ public class FeedbackNotificationsGenerator {
         appContext = context;
         assessor = new FeedbackAssessor(context);
 
-        appMap = context.getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = context.getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         firstRunDate = getFirstRunDate();
     }
 
-    private DateGenerator getFirstRunDate() {
+    private DateFormatter getFirstRunDate() {
 
-        DateGenerator defaultDate = new DateGenerator();
-        String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, defaultDate.getDate());
+        DateFormatter defaultDate = new DateFormatter();
+        String firstRunDateStr = appMap.getString(SharedPreferenceDB.getInstance().FIRST_RUN_DATE, defaultDate.getDate());
 
-        return new DateGenerator(firstRunDateStr);
+        return new DateFormatter(firstRunDateStr);
     }
 
     private String getWeeklyNotificationTitle(){
@@ -173,7 +173,7 @@ public class FeedbackNotificationsGenerator {
 
     private boolean isTodayAWeekFinished() {
 
-        DateGenerator todaysDate = new DateGenerator();
+        DateFormatter todaysDate = new DateFormatter();
 
         int daysSinceFirstDay = firstRunDate.calculateIntervalBetweenDates(todaysDate);
 
@@ -185,8 +185,8 @@ public class FeedbackNotificationsGenerator {
         //user that subscribed to daily notification will receive a weekly update at the end of every week
         if(isTodayAWeekFinished()){
 
-            generalFeedback = assessor.isThisRangeOfDatesShowsImprovment(firstRunDate, new DateGenerator());
-            weeklyFeedback = assessor.isThisRangeOfDatesShowsImprovment(new DateGenerator(-7), new DateGenerator(-1));
+            generalFeedback = assessor.isThisRangeOfDatesShowsImprovment(firstRunDate, new DateFormatter());
+            weeklyFeedback = assessor.isThisRangeOfDatesShowsImprovment(new DateFormatter(-7), new DateFormatter(-1));
 
             weeklyNotification();
 

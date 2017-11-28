@@ -3,7 +3,6 @@ package roeevakrat.betterme;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -27,8 +26,8 @@ public class RegressionTrendLineCalculator extends FragmentActivity {
 
         regression = new SimpleRegression();
 
-        DateGenerator from = new DateGenerator(fromDate);
-        DateGenerator to = new DateGenerator(toDate);
+        DateFormatter from = new DateFormatter(fromDate);
+        DateFormatter to = new DateFormatter(toDate);
 
         int numOfDaysInRange = from.calculateIntervalBetweenDates(to);
 

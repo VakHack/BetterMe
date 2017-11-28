@@ -23,7 +23,7 @@ public class WelcomeScreen extends AppCompatActivity {
     SharedPreferences appPerfs;
     SharedPreferences.Editor prefsEditor;
 
-    DateGenerator firstRunDate;
+    DateFormatter firstRunDate;
 
     private void setTextFont(TextView tv, Typeface tf, String font){
         tf = Typeface.createFromAsset(getAssets(), font);
@@ -36,17 +36,17 @@ public class WelcomeScreen extends AppCompatActivity {
     }
 
     private void proceedToCounterIfNotFirstRun(){
-        if(appPerfs.getBoolean(KeysDB.getInstance().APP_FIRST_RUN_BOOL, true)){
+        if(appPerfs.getBoolean(SharedPreferenceDB.getInstance().APP_FIRST_RUN_BOOL, true)){
 
             //edit condition to be the first run
             prefsEditor = appPerfs.edit();
-            prefsEditor.putBoolean(KeysDB.getInstance().APP_FIRST_RUN_BOOL, false);
+            prefsEditor.putBoolean(SharedPreferenceDB.getInstance().APP_FIRST_RUN_BOOL, false);
             prefsEditor.apply();
 
             //keep the date of the first day of training
-            firstRunDate = new DateGenerator();
+            firstRunDate = new DateFormatter();
             prefsEditor = appPerfs.edit();
-            prefsEditor.putString(KeysDB.getInstance().FIRST_RUN_DATE, firstRunDate.getDate());
+            prefsEditor.putString(SharedPreferenceDB.getInstance().FIRST_RUN_DATE, firstRunDate.getDate());
             prefsEditor.apply();
 
         } else {
@@ -61,7 +61,7 @@ public class WelcomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_welcome_screen);
 
         //initialize preferences
-        appPerfs = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appPerfs = getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         proceedToCounterIfNotFirstRun();
 

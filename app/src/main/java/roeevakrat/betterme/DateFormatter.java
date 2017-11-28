@@ -9,20 +9,20 @@ import org.joda.time.format.DateTimeFormatter;
  * Created by Administrator on 20/09/2017.
  */
 
-public class DateGenerator {
+public class DateFormatter {
 
     private LocalDate date;
     private DateTimeFormatter dateFormatter;
     private String dateStr;
 
-    public DateGenerator(){
+    public DateFormatter(){
 
         date = LocalDate.now();
         dateFormatter = DateTimeFormat.forPattern("dd.MM.yy");
         dateStr = dateFormatter.print(date);
     }
 
-    public DateGenerator(int interval){
+    public DateFormatter(int interval){
 
         date = LocalDate.now();
         date = date.plusDays(interval);
@@ -31,14 +31,14 @@ public class DateGenerator {
         dateStr = dateFormatter.print(date);
     }
 
-    public DateGenerator(DateGenerator other){
+    public DateFormatter(DateFormatter other){
 
         date = other.date;
         dateFormatter = other.dateFormatter;
         dateStr = other.dateStr;
     }
 
-    public DateGenerator(String todaysDate){
+    public DateFormatter(String todaysDate){
 
         dateFormatter = DateTimeFormat.forPattern("dd.MM.yy");
         date = LocalDate.parse(todaysDate, dateFormatter);
@@ -81,12 +81,12 @@ public class DateGenerator {
         return Math.abs(Days.daysBetween(date, givenDate).getDays());
     }
 
-    public int calculateIntervalBetweenDates(DateGenerator daysSince) {
+    public int calculateIntervalBetweenDates(DateFormatter daysSince) {
 
         return calculateIntervalBetweenDates(daysSince.dateStr);
     }
 
-    public boolean equals(DateGenerator other){
+    public boolean equals(DateFormatter other){
 
         return dateStr.equals(other.dateStr);
     }

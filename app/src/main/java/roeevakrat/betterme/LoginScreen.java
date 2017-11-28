@@ -37,9 +37,9 @@ public class LoginScreen extends AppCompatActivity {
     private void addUserDataToSharedprefs(){
 
         appMapEditor = appMap.edit();
-        appMapEditor.putBoolean(KeysDB.getInstance().LOGGED_IN_CLOUD, true);
-        appMapEditor.putString(KeysDB.getInstance().USER_PASSWORD, userPassword);
-        appMapEditor.putString(KeysDB.getInstance().USERNAME, userUsername);
+        appMapEditor.putBoolean(SharedPreferenceDB.getInstance().LOGGED_IN_CLOUD, true);
+        appMapEditor.putString(SharedPreferenceDB.getInstance().USER_PASSWORD, userPassword);
+        appMapEditor.putString(SharedPreferenceDB.getInstance().USERNAME, userUsername);
 
         appMapEditor.apply();
     }
@@ -65,7 +65,7 @@ public class LoginScreen extends AppCompatActivity {
         loginFeedbackView.setTypeface(Typeface.createFromAsset(getAssets(), FontsDB.getInstance().getBodyFont()));
 
         //initialize shared preferences
-        appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //initialize auth object
         server = new FirebaseServerHandler(this);

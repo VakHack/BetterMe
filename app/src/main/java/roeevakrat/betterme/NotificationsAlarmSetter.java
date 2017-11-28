@@ -31,7 +31,7 @@ public class NotificationsAlarmSetter {
     public NotificationsAlarmSetter(Context context){
 
         mainScreenContext = context;
-        appMap = context.getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = context.getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //set the daily details
         dailyHour = Calendar.getInstance();
@@ -48,7 +48,7 @@ public class NotificationsAlarmSetter {
     private void setFlagOfNotificationsInterval(long interval){
 
         appMapEditor = appMap.edit();
-        appMapEditor.putLong(KeysDB.getInstance().NOTIFICATIONS_INTERVAL_CATEGORY, interval);
+        appMapEditor.putLong(SharedPreferenceDB.getInstance().NOTIFICATIONS_INTERVAL_CATEGORY, interval);
         appMapEditor.apply();
     }
 

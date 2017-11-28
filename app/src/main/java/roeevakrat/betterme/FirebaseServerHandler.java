@@ -93,8 +93,6 @@ public class FirebaseServerHandler extends ServerHandler {
 
                         isSucceeded = true;
                         storageFeedback = "Data uploaded successfully";
-
-                        Log.i("bettermelog", "success");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

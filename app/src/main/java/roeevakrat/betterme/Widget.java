@@ -13,9 +13,6 @@ import android.widget.RemoteViews;
  */
 public class Widget extends AppWidgetProvider {
 
-    SharedPreferences countersMap;
-    DateGenerator todaysDate;
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,8 +46,8 @@ public class WeeklyChart extends AppCompatActivity {
     TextView trendButton;
     ImageView helpButton;
 
-    DateGenerator fromDate;
-    DateGenerator toDate;
+    DateFormatter fromDate;
+    DateFormatter toDate;
 
     String datesRange;
 
@@ -89,7 +90,7 @@ public class WeeklyChart extends AppCompatActivity {
 
         //add entries to main plot
         chartEntries = new ArrayList<>();
-        DateGenerator iterateDates = new DateGenerator(fromDate);
+        DateFormatter iterateDates = new DateFormatter(fromDate);
 
         for(int i = 0; i < 7; ++i) {
 
@@ -121,7 +122,7 @@ public class WeeklyChart extends AppCompatActivity {
 
         String weekDates[] = new String[7];
 
-        DateGenerator dateIncrement = new DateGenerator(fromDate);
+        DateFormatter dateIncrement = new DateFormatter(fromDate);
 
         for(int i = 0; i < 7; ++i){
 
@@ -201,7 +202,7 @@ public class WeeklyChart extends AppCompatActivity {
 
     private void weekChangeUpdates(){
 
-        DateGenerator todaysDate = new DateGenerator();
+        DateFormatter todaysDate = new DateFormatter();
 
         updateDateTitle();
         insertDataToPlots();
@@ -218,18 +219,20 @@ public class WeeklyChart extends AppCompatActivity {
         }
     }
 
-    private DateGenerator getFirstRunDate(){
+    private DateFormatter getFirstRunDate(){
 
-        DateGenerator today = new DateGenerator();
-        String firstRunDateStr = appMap.getString(KeysDB.getInstance().FIRST_RUN_DATE, today.getDate());
+        DateFormatter today = new DateFormatter();
+        String firstRunDateStr = appMap.getString(SharedPreferenceDB.getInstance().FIRST_RUN_DATE, today.getDate());
 
-        return new DateGenerator(firstRunDateStr);
+        Log.i("bettermelog", "first run: " + firstRunDateStr);
+
+        return new DateFormatter(firstRunDateStr);
     }
 
     private boolean isThisTheFirstWeek(){
 
-        DateGenerator firstRun = getFirstRunDate();
-        DateGenerator iterateDates = new DateGenerator();
+        DateFormatter firstRun = getFirstRunDate();
+        DateFormatter iterateDates = new DateFormatter();
 
         for(int i = 7; i >= 0; --i){
 
@@ -246,8 +249,8 @@ public class WeeklyChart extends AppCompatActivity {
 
     private boolean isThisTheCurrentWeek(){
 
-        DateGenerator today = new DateGenerator();
-        DateGenerator iterateDates = new DateGenerator(toDate);
+        DateFormatter today = new DateFormatter();
+        DateFormatter iterateDates = new DateFormatter(toDate);
 
         for(int i = 7; i >= 0; --i){
 
@@ -292,14 +295,14 @@ public class WeeklyChart extends AppCompatActivity {
         setContentView(R.layout.activity_weekly_chart);
 
         //initialize preferences
-        appMap = getApplicationContext().getSharedPreferences(KeysDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
+        appMap = getApplicationContext().getSharedPreferences(SharedPreferenceDB.getInstance().SHARED_PREFS, MODE_PRIVATE);
 
         //initialize trend button to 'off' state
         isTrendButtonPressed = false;
 
         //initialize dates
-        fromDate = new DateGenerator(-6);
-        toDate = new DateGenerator();
+        fromDate = new DateFormatter(-6);
+        toDate = new DateFormatter();
 
         backButton = (ImageView)findViewById(R.id.backToCounter);
         lastWeekButton = (ImageView)findViewById(R.id.lastWeek);
